@@ -37,7 +37,7 @@ export default function Navbar() {
 
 	return (
 		<nav
-			className={`w-full px-5 lg:px-40 py-5 flex items-center justify-between fixed top-0 left-0 transition-transform duration-300 bg-background shadow-md z-50 ${
+			className={`w-full px-5 lg:px-40 py-5 flex items-center justify-between fixed top-0 left-0 transition-transform duration-300 bg-background z-50 ${
 				isVisible ? "translate-y-0" : "-translate-y-full"
 			}`}
 		>
