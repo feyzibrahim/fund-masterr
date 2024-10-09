@@ -1,18 +1,25 @@
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
-import { CloudCog } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CloudCog, User } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { BiLogoPlayStore } from "react-icons/bi";
+import { BsInstagram, BsTwitter } from "react-icons/bs";
+import { FaAppStore, FaFacebook } from "react-icons/fa";
 
 export default function Home() {
 	return (
 		<main className="px-5 lg:px-40">
 			<Navbar />
 			<div className="min-h-screen py-20 grid md:grid-cols-2">
-				<div className="flex flex-col justify-center space-y-7 bg-gray-200 px-20">
+				<div className="flex flex-col justify-center space-y-7 bg-gray-200 md:px-20">
 					<p>
 						<span className="text-4xl">*</span>30 Days free trial
 					</p>
-					<h1 className="text-5xl font-black">Life Should Be Easy</h1>
+					<h1 className="text-2xl md:text-6xl font-black">
+						Life Should Be Easy
+					</h1>
 					<p className="text-foreground-secondary">
 						Financial Transactions, Tracking, and Accounting Made Easy
 					</p>
@@ -51,25 +58,190 @@ export default function Home() {
 						</p>
 					</div>
 					<div className="space-y-5 border p-5 rounded-3xl">
-						<div className="shadow-xl h-64 rounded-3xl flex items-end gap-5 p-10">
-							<div className="bg-blue-500 h-28 w-full"></div>
-							<div className="bg-blue-500 h-20 w-full"></div>
-							<div className="bg-blue-500 h-48 w-full"></div>
-							<div className="bg-blue-500 h-36 w-full"></div>
-							<div className="bg-blue-500 h-16 w-full"></div>
+						<div className="shadow-2xl h-64 rounded-3xl flex items-end gap-5 p-10">
+							<div className="bg-blue-500 h-28 w-full rounded-md"></div>
+							<div className="bg-blue-500 h-20 w-full rounded-md"></div>
+							<div className="bg-blue-500 h-48 w-full rounded-md"></div>
+							<div className="bg-blue-500 h-36 w-full rounded-md"></div>
+							<div className="bg-blue-500 h-16 w-full rounded-md"></div>
 						</div>
 						<h2 className="text-xl font-bold">Data Secure</h2>
-						<p>Sending money faster & easier with end to end encryption</p>
+						<p>Keeping accounts faster & easier with end to end encryption</p>
 					</div>
 					<div className="space-y-5 border p-5 rounded-3xl">
-						<h2 className="text-xl font-bold">Add Cards</h2>
+						<div className="h-64 shadow-2xl rounded-3xl overflow-clip">
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>John Doe</p>
+							</div>
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>Stephan Strange</p>
+							</div>
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>Capitan Miller</p>
+							</div>
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>Helen Rude</p>
+							</div>
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>Rudy</p>
+							</div>
+							<div className="flex items-center gap-5 p-4 border-b">
+								<User />
+								<p>John Doe</p>
+							</div>
+						</div>
+						<h2 className="text-xl font-bold">Add Multiple Contact</h2>
 						<p>
-							Add multiple cards and track your daily expense with quality
-							interface
+							Add multiple contacts and track your daily expense with
+							quality interface
 						</p>
 					</div>
 				</div>
 			</div>
+			<div className="min-h-screen grid md:grid-cols-2">
+				<div className="flex items-center justify-center">
+					<Image
+						src="/mobile1.png"
+						alt="mobile1"
+						width={750}
+						height={946}
+						className="md:w-2/3"
+					/>
+				</div>
+				<div className="md:p-20 flex flex-col justify-center space-y-10">
+					<h1 className="text-2xl md:text-6xl font-black">
+						Download mobile app
+					</h1>
+					<p>
+						Download our mobile transaction app for android. It helps your
+						transaction quickly and more smartly.
+					</p>
+					<div>
+						<div className="border rounded-3xl flex gap-3 p-5 items-center w-fit font-bold hover:text-blue-500 cursor-pointer">
+							<BiLogoPlayStore className="h-7 w-7" />
+							Play Store
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="min-h-screen grid md:grid-cols-2 border-b">
+				<div className="md:p-20 flex flex-col justify-center space-y-10">
+					<h1 className="text-2xl md:text-6xl font-black">
+						Connecting all your contacts
+					</h1>
+					<p>
+						All your contacts are connected with our app. You can easily track
+						your daily expense with our app.
+					</p>
+					<div>
+						<div className="border rounded-3xl flex gap-3 py-5 px-10 items-center w-fit font-bold hover:text-blue-500 cursor-pointer">
+							Get Started
+						</div>
+					</div>
+				</div>
+				<div className="flex items-center justify-center">
+					<Image
+						src="/mobile2.png"
+						alt="mobile1"
+						width={652}
+						height={946}
+						className="w-2/3"
+					/>
+				</div>
+			</div>
+			<div className="flex items-center justify-center h-96 text-center">
+				<div className="space-y-5">
+					<h1 className="text-4xl font-bold">Subscribe Newsletter</h1>
+					<p>Get the latest updates and offers from us.</p>
+
+					<div className="md:flex space-y-5 md:space-y-0 gap-5">
+						<Input
+							type="email"
+							placeholder="Enter your email."
+							className="px-7 py-7"
+						/>
+						<Button className="px-7 py-7 w-full md:w-fit">Get Started</Button>
+					</div>
+				</div>
+			</div>
+			<footer className="bg-gray-200 px-5 py-8">
+				<div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+					{/* About Section */}
+					<div>
+						<Link href="/">
+							<div className="flex gap-2 items-center hover:cursor-pointer py-5">
+								<Image
+									src="/logo.png"
+									alt="logo"
+									width={30}
+									height={30}
+								/>
+								<p className="font-bold">Fund Masterr</p>
+							</div>
+						</Link>
+						<p className="">
+							We are dedicated to providing quality service and ensuring
+							customer satisfaction. Learn more about what we do.
+						</p>
+					</div>
+
+					{/* Quick Links Section */}
+					<div>
+						<h2 className="text-lg font-semibold mb-4">Quick Links</h2>
+						<ul className="space-y-2">
+							<li>
+								<Link href="" className=" hover:text-primary">
+									Home
+								</Link>
+							</li>
+							<li>
+								<Link href="#about" className=" hover:text-primary">
+									About
+								</Link>
+							</li>
+							<li>
+								<Link href="#experience" className=" hover:text-primary">
+									Experience
+								</Link>
+							</li>
+							<li>
+								<Link href="#contact-us" className=" hover:text-primary">
+									Contact Us
+								</Link>
+							</li>
+						</ul>
+					</div>
+
+					{/* Contact Information Section */}
+					<div>
+						<h2 className="text-lg font-semibold mb-4">Contact Us</h2>
+						<p className="">Email: contact@fundmasterr.com</p>
+						<p className="">Phone: +91 00000 00000</p>
+						<div className="mt-4 space-x-4 flex gap-5">
+							<Link target="_blank" href="" className="hover:text-primary">
+								<FaFacebook />
+							</Link>
+							<Link target="_blank" href="#" className="hover:text-primary">
+								<BsTwitter />
+							</Link>
+							<Link target="_blank" href="" className="hover:text-primary">
+								<BsInstagram />
+							</Link>
+						</div>
+					</div>
+				</div>
+
+				<div className="border-t border-gray-700 mt-8 pt-4">
+					<p className="text-center text-gray-500">
+						© 2024 Fund Masterr. All rights reserved.
+					</p>
+				</div>
+			</footer>
 		</main>
 	);
 }
