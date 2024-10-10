@@ -62,8 +62,12 @@ export default function Navbar() {
 				</p>
 			</div>
 			<div className="space-x-5 hidden md:block">
-				<Button variant="link">Login</Button>
-				<Button>Sign Up</Button>
+				<Link href="/login">
+					<Button variant="link">Login</Button>
+				</Link>
+				<Link href="/sign-up">
+					<Button>Sign Up</Button>
+				</Link>
 				<ModeToggle />
 			</div>
 			<div className="lg:hidden">

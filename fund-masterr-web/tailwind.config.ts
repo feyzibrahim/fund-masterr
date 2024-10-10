@@ -20,7 +20,13 @@ const config: Config = {
 				sm: "calc(var(--radius) - 4px)",
 			},
 			colors: {
-				background: "hsl(var(--background))",
+				background: {
+					DEFAULT: "hsl(var(--background))",
+					secondary: {
+						DEFAULT: "hsl(var(--background-secondary))",
+						darker: "hsl(var(--background-secondary-darker))",
+					},
+				},
 				foreground: {
 					DEFAULT: "hsl(var(--foreground))",
 					secondary: "hsl(var(--foreground-secondary))",

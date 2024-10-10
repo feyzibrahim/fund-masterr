@@ -6,14 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { BiLogoPlayStore } from "react-icons/bi";
 import { BsInstagram, BsTwitter } from "react-icons/bs";
-import { FaAppStore, FaFacebook } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
 
 export default function Home() {
 	return (
 		<main className="px-5 lg:px-40">
 			<Navbar />
 			<div className="min-h-screen py-20 grid md:grid-cols-2">
-				<div className="flex flex-col justify-center space-y-7 bg-gray-200 md:px-20">
+				<div className="flex flex-col justify-center space-y-7 bg-background-secondary md:px-20">
 					<p>
 						<span className="text-4xl">*</span>30 Days free trial
 					</p>
@@ -40,10 +40,10 @@ export default function Home() {
 				<div className="grid  md:grid-cols-3 gap-10">
 					<div className="space-y-5 border p-5 rounded-3xl">
 						<div className="shadow-xl h-40 rounded-3xl flex flex-col justify-center gap-5 p-5">
-							<div className="bg-gray-200 h-5 w-3/4 rounded-full"></div>
-							<div className="bg-gray-200 h-5 rounded-full"></div>
-							<div className="bg-gray-200 h-5 w-3/4 rounded-full"></div>
-							<div className="bg-gray-200 h-5 w-2/4 rounded-full"></div>
+							<div className="bg-background-secondary h-5 w-3/4 rounded-full"></div>
+							<div className="bg-background-secondary h-5 rounded-full"></div>
+							<div className="bg-background-secondary h-5 w-3/4 rounded-full"></div>
+							<div className="bg-background-secondary h-5 w-2/4 rounded-full"></div>
 						</div>
 						<div className="h-20 bg-blue-500 rounded-3xl flex gap-5 items-center p-5">
 							<div className="p-3 bg-pink-500 w-fit rounded-xl h-fit">
@@ -169,12 +169,12 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-			<footer className="bg-gray-200 px-5 py-8">
-				<div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+			<footer className="bg-background-secondary px-10 py-8 text-sm">
+				<div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
 					{/* About Section */}
-					<div>
+					<div className="space-y-5">
 						<Link href="/">
-							<div className="flex gap-2 items-center hover:cursor-pointer py-5">
+							<div className="flex gap-2 items-center hover:cursor-pointer">
 								<Image
 									src="/logo.png"
 									alt="logo"
@@ -184,29 +184,57 @@ export default function Home() {
 								<p className="font-bold">Fund Masterr</p>
 							</div>
 						</Link>
-						<p className="">
-							We are dedicated to providing quality service and ensuring
-							customer satisfaction. Learn more about what we do.
+						<p>
+							Financial transactions remotely using a mobile device such as
+							a smartphone, laptop or tablet.
 						</p>
+						<div className="space-x-4 flex">
+							<Link
+								target="_blank"
+								href=""
+								className="hover:text-primary bg-background-secondary-darker p-2 rounded-md"
+							>
+								<FaFacebook className="w-3 h-3" />
+							</Link>
+							<Link
+								target="_blank"
+								href="#"
+								className="hover:text-primary bg-background-secondary-darker p-2 rounded-md"
+							>
+								<BsTwitter className="w-3 h-3" />
+							</Link>
+							<Link
+								target="_blank"
+								href=""
+								className="hover:text-primary bg-background-secondary-darker p-2 rounded-md"
+							>
+								<BsInstagram className="w-3 h-3" />
+							</Link>
+						</div>
 					</div>
 
 					{/* Quick Links Section */}
 					<div>
-						<h2 className="text-lg font-semibold mb-4">Quick Links</h2>
+						<h2 className="font-black mb-4">Related</h2>
 						<ul className="space-y-2">
 							<li>
 								<Link href="" className=" hover:text-primary">
-									Home
-								</Link>
-							</li>
-							<li>
-								<Link href="#about" className=" hover:text-primary">
 									About
 								</Link>
 							</li>
 							<li>
+								<Link href="#about" className=" hover:text-primary">
+									Terms of Use
+								</Link>
+							</li>
+							<li>
 								<Link href="#experience" className=" hover:text-primary">
-									Experience
+									Privacy Policy
+								</Link>
+							</li>
+							<li>
+								<Link href="#contact-us" className=" hover:text-primary">
+									How it works
 								</Link>
 							</li>
 							<li>
@@ -216,28 +244,25 @@ export default function Home() {
 							</li>
 						</ul>
 					</div>
-
-					{/* Contact Information Section */}
 					<div>
-						<h2 className="text-lg font-semibold mb-4">Contact Us</h2>
-						<p className="">Email: contact@fundmasterr.com</p>
-						<p className="">Phone: +91 00000 00000</p>
-						<div className="mt-4 space-x-4 flex gap-5">
-							<Link target="_blank" href="" className="hover:text-primary">
-								<FaFacebook />
-							</Link>
-							<Link target="_blank" href="#" className="hover:text-primary">
-								<BsTwitter />
-							</Link>
-							<Link target="_blank" href="" className="hover:text-primary">
-								<BsInstagram />
-							</Link>
+						<h2 className="font-black mb-4">Support</h2>
+						<div className="space-y-2">
+							<p className="">Support Career</p>
+							<p className="">24h Service</p>
+							<p className="">Quick Chat</p>
+						</div>
+					</div>
+					<div>
+						<h2 className="font-black mb-4">Contact</h2>
+						<div className="space-y-2">
+							<p className="">Email: contact@fundmasterr.com</p>
+							<p className="">Phone: +91 00000 00000</p>
 						</div>
 					</div>
 				</div>
 
-				<div className="border-t border-gray-700 mt-8 pt-4">
-					<p className="text-center text-gray-500">
+				<div className="border-t border-background mt-8 pt-4">
+					<p className="text-center text-foreground-secondary">
 						© 2024 Fund Masterr. All rights reserved.
 					</p>
 				</div>
