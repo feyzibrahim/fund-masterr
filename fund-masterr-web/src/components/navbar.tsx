@@ -6,10 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./theme-switch";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
 	const [isVisible, setIsVisible] = useState(true);
 	const [lastScrollY, setLastScrollY] = useState(0);
+	const pathname = usePathname();
 
 	const controlNavbar = () => {
 		if (typeof window !== "undefined") {
@@ -63,10 +65,17 @@ export default function Navbar() {
 			</div>
 			<div className="space-x-5 hidden md:block">
 				<Link href="/login">
-					<Button variant="link">Login</Button>
+					<Button
+						variant="link"
+						className={pathname === "/login" ? "underline" : ""}
+					>
+						Login
+					</Button>
 				</Link>
 				<Link href="/sign-up">
-					<Button>Sign Up</Button>
+					<Button className={pathname === "/sign-up" ? "underline" : ""}>
+						Sign Up
+					</Button>
 				</Link>
 				<ModeToggle />
 			</div>
