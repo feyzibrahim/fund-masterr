@@ -15,7 +15,7 @@ export default function SignUpPage() {
 				<Input placeholder="Enter your email" />
 				<Input placeholder="Enter your password" />
 				<Button className="w-full">Submit</Button>
-				<p className="text-center">
+				<p className="text-center text-sm">
 					Already have an account?{" "}
 					<Link href="/sign-up" className="text-blue-500">
 						Login
