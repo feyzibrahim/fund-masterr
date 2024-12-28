@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
 // Create an Axios instance
 const axiosInstance: AxiosInstance = axios.create({
-	baseURL: "http://localhost:4000/api", // Replace with your base URL
+	baseURL: process.env.backend ?? "http://localhost:4000/api", // Replace with your base URL
 	timeout: 5000, // Set a timeout limit
 	headers: {
 		"Content-Type": "application/json",
@@ -30,13 +30,29 @@ axiosInstance.interceptors.response.use(
 
 class AxiosRequestClass {
 	get = async <RESPONSE>(url: string, params?: any): Promise<RESPONSE> => {
-		const { data } = await axiosInstance.get(url, params);
-		return data;
+		try {
+			const { data } = await axiosInstance.get(url, params);
+			return data;
+		} catch (error: any) {
+			if (error) {
+				throw new Error(error.response?.data || error?.message || error?.error);
+			} else {
+				throw new Error("An unexpected error occurred");
+			}
+		}
 	};
 
 	patch = async <BODY, RESPONSE>(url: string, body: BODY): Promise<RESPONSE> => {
-		const { data } = await axiosInstance.patch(url, body);
-		return data;
+		try {
+			const { data } = await axiosInstance.patch(url, body);
+			return data;
+		} catch (error: any) {
+			if (error) {
+				throw new Error(error.response?.data || error?.message || error?.error);
+			} else {
+				throw new Error("An unexpected error occurred");
+			}
+		}
 	};
 
 	post = async <BODY, RESPONSE>(url: string, body: BODY): Promise<RESPONSE> => {
@@ -45,7 +61,7 @@ class AxiosRequestClass {
 			return response.data;
 		} catch (error: any) {
 			if (error) {
-				throw new Error(error.response?.data || error?.message);
+				throw new Error(error.response?.data || error?.message || error?.error);
 			} else {
 				throw new Error("An unexpected error occurred");
 			}
@@ -53,9 +69,17 @@ class AxiosRequestClass {
 	};
 
 	delete = async <RESPONSE>(url: string): Promise<RESPONSE> => {
-		const { data } = await axiosInstance.delete(url);
+		try {
+			const { data } = await axiosInstance.delete(url);
 
-		return data;
+			return data;
+		} catch (error: any) {
+			if (error) {
+				throw new Error(error.response?.data || error?.message || error?.error);
+			} else {
+				throw new Error("An unexpected error occurred");
+			}
+		}
 	};
 }
 const AxiosRequest = new AxiosRequestClass();

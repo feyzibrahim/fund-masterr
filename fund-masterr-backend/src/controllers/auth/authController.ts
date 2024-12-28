@@ -1,6 +1,8 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import validator from "validator";
 import User from "../../model/userModel";
 
 // Create a token
@@ -45,17 +47,51 @@ const getUserDataFirst = async (req: Request, res: Response): Promise<void> => {
 const signUpUser = async (req: Request, res: Response): Promise<void> => {
 	try {
 		let userCredentials = req.body;
-		// const profileImgURL = req?.file?.filename;
+		console.log(
+			"🚀 ~ file: authController.ts:50 ~ signUpUser ~ userCredentials:",
+			userCredentials
+		);
 
-		// if (profileImgURL) {
-		// 	userCredentials = { ...userCredentials, profileImgURL };
+		const { email, password, confirmPassword } = req.body;
+
+		if (!email || !password || !confirmPassword) {
+			throw new Error("All fields are required");
+		}
+
+		// if (firstName.trim() === "" || lastName.trim() === "") {
+		// 	throw new Error("First and last name cannot be empty");
 		// }
 
-		const user = await User.signup(userCredentials, "user", true);
+		if (password !== confirmPassword) {
+			throw new Error("Passwords do not match");
+		}
 
+		if (!validator.isEmail(email)) {
+			throw new Error("Invalid email address");
+		}
+
+		if (!validator.isStrongPassword(password)) {
+			throw new Error("Password is not strong enough");
+		}
+
+		const existingUser = await User.findOne({ email });
+		if (existingUser) {
+			throw new Error("Email already in use");
+		}
+
+		const salt = await bcrypt.genSalt(10);
+		const hash = await bcrypt.hash(password, salt);
+
+		const user = await User.create({
+			...userCredentials,
+			password: hash,
+			isActive: true,
+		});
 		if (!user) {
 			throw new Error("Failed to create user");
 		}
+
+		user.password = ""; // Clear the password before returning
 
 		const token = createToken(user._id);
 
@@ -72,7 +108,29 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
 	const { email, password } = req.body;
 
 	try {
-		const user = await User.login(email, password);
+		if (!email || !password) {
+			throw new Error("All fields are required");
+		}
+
+		if (!validator.isEmail(email)) {
+			throw new Error("Invalid email address");
+		}
+
+		const user = await User.findOne({ email });
+		if (!user) {
+			throw new Error("Email not registered");
+		}
+
+		if (!user.isActive) {
+			throw new Error("Account is inactive. Contact support");
+		}
+
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			throw new Error("Incorrect password");
+		}
+
+		user.password = "";
 
 		const token = createToken(user._id);
 
@@ -141,19 +199,38 @@ const changePassword = async (req: Request, res: Response): Promise<void> => {
 			throw new Error("Invalid ID!!!");
 		}
 
-		const { currentPassword, password, passwordAgain } = req.body;
+		const { currentPassword, password, confirmPassword } = req.body;
 
-		const user = await User.changePassword(
-			_id,
-			currentPassword,
-			password,
-			passwordAgain
-		);
+		if (password !== confirmPassword) {
+			throw new Error("Passwords do not match");
+		}
 
-		res.status(200).json({ user, success: true });
+		if (!validator.isStrongPassword(password)) {
+			throw new Error("New password is not strong enough");
+		}
+
+		const user = await User.findById(_id);
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		const isMatch = await bcrypt.compare(currentPassword, user.password);
+		if (!isMatch) {
+			throw new Error("Current password is incorrect");
+		}
+
+		const salt = await bcrypt.genSalt(10);
+		const hash = await bcrypt.hash(password, salt);
+
+		user.password = hash;
+		await user.save();
+
+		user.password = "";
+
+		// res.status(200).json({ user, success: true });
 	} catch (error: any) {
 		res.status(400).json({ error: error.message });
 	}
 };
 
-export { getUserDataFirst, signUpUser, loginUser, logoutUser, editUser, changePassword };
+export { changePassword, editUser, getUserDataFirst, loginUser, logoutUser, signUpUser };

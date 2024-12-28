@@ -1,15 +1,18 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { LoginFormValues } from "./components/login-form";
 import { AxiosRequest } from "@/lib/axios.instance";
+import { SignupFormValues } from "./components/signup-form";
 
-export async function login(formData: LoginFormValues) {
-	const { email, password } = formData;
+export async function signup(formData: SignupFormValues) {
+	const { email, password, confirmPassword } = formData;
 
 	try {
-		const response = await AxiosRequest.post("/auth/login", { email, password });
-		console.log("🚀 ~ file: login.ts:14 ~ login ~ response:", response);
+		const response = await AxiosRequest.post("/auth/signup", {
+			email,
+			password,
+			confirmPassword,
+		});
 
 		// cookies().set("auth", "authenticated", { secure: true, httpOnly: true });
 		return { success: true };

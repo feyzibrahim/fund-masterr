@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { BsApple, BsGoogle, BsMeta } from "react-icons/bs";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "./components/login-form";
 
 export default function LoginPage() {
 	return (

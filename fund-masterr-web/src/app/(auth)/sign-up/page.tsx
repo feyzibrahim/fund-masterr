@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { BsApple, BsGoogle, BsMeta } from "react-icons/bs";
+import SignupForm from "./components/signup-form";
 
 export default function SignUpPage() {
 	return (
@@ -12,9 +12,7 @@ export default function SignUpPage() {
 				<p className="text-foreground-secondary">
 					Let&apos;s get you all set up so you can access your personal account.
 				</p>
-				<Input placeholder="Enter your email" />
-				<Input placeholder="Enter your password" />
-				<Button className="w-full">Submit</Button>
+				<SignupForm />
 				<p className="text-center text-sm">
 					Already have an account?{" "}
 					<Link href="/sign-up" className="text-blue-500">
