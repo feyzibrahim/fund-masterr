@@ -1,29 +1,23 @@
 "use client";
 
-import * as React from "react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarHeader,
+	SidebarRail,
+} from "@/components/ui/sidebar";
 import {
 	AudioWaveform,
 	BookOpen,
 	Bot,
 	Command,
-	Frame,
 	GalleryVerticalEnd,
-	Map,
-	PieChart,
 	Settings2,
 	SquareTerminal,
 } from "lucide-react";
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarFooter,
-	SidebarHeader,
-	SidebarRail,
-} from "@/components/ui/sidebar";
-import { TeamSwitcher } from "./team-switcher";
+import * as React from "react";
 
 // This is sample data.
 const data = {
@@ -67,21 +61,21 @@ const data = {
 			],
 		},
 		{
-			title: "Models",
+			title: "Contacts",
 			url: "#",
 			icon: Bot,
 			items: [
 				{
-					title: "Genesis",
-					url: "#",
+					title: "View All",
+					url: "/contacts",
 				},
 				{
-					title: "Explorer",
-					url: "#",
+					title: "Create",
+					url: "/contacts/create",
 				},
 				{
-					title: "Quantum",
-					url: "#",
+					title: "Archived",
+					url: "/contacts/archived",
 				},
 			],
 		},
@@ -132,23 +126,6 @@ const data = {
 			],
 		},
 	],
-	// projects: [
-	// 	{
-	// 		name: "Design Engineering",
-	// 		url: "#",
-	// 		icon: Frame,
-	// 	},
-	// 	{
-	// 		name: "Sales & Marketing",
-	// 		url: "#",
-	// 		icon: PieChart,
-	// 	},
-	// 	{
-	// 		name: "Travel",
-	// 		url: "#",
-	// 		icon: Map,
-	// 	},
-	// ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -159,11 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
-			{/* <SidebarFooter>
-				<TeamSwitcher teams={data.teams} />
-			</SidebarFooter> */}
 			<SidebarRail />
 		</Sidebar>
 	);
