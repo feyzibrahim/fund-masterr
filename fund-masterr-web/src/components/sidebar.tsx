@@ -92,19 +92,19 @@ const data = {
 			items: [
 				{
 					title: "Introduction",
-					url: "#",
+					url: "/docs",
 				},
 				{
 					title: "Get Started",
-					url: "#",
+					url: "/docs/get-started",
 				},
 				{
 					title: "Tutorials",
-					url: "#",
+					url: "/docs/tutorials",
 				},
 				{
 					title: "Changelog",
-					url: "#",
+					url: "/docs/change-log",
 				},
 			],
 		},
@@ -132,23 +132,23 @@ const data = {
 			],
 		},
 	],
-	projects: [
-		{
-			name: "Design Engineering",
-			url: "#",
-			icon: Frame,
-		},
-		{
-			name: "Sales & Marketing",
-			url: "#",
-			icon: PieChart,
-		},
-		{
-			name: "Travel",
-			url: "#",
-			icon: Map,
-		},
-	],
+	// projects: [
+	// 	{
+	// 		name: "Design Engineering",
+	// 		url: "#",
+	// 		icon: Frame,
+	// 	},
+	// 	{
+	// 		name: "Sales & Marketing",
+	// 		url: "#",
+	// 		icon: PieChart,
+	// 	},
+	// 	{
+	// 		name: "Travel",
+	// 		url: "#",
+	// 		icon: Map,
+	// 	},
+	// ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -159,11 +159,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavProjects projects={data.projects} />
+				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
-			<SidebarFooter>
+			{/* <SidebarFooter>
 				<TeamSwitcher teams={data.teams} />
-			</SidebarFooter>
+			</SidebarFooter> */}
 			<SidebarRail />
 		</Sidebar>
 	);
