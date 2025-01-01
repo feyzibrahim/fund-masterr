@@ -13,7 +13,6 @@ import {
 	Settings2,
 	SquareTerminal,
 } from "lucide-react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
@@ -65,10 +64,6 @@ const data = {
 					title: "Starred",
 					url: "#",
 				},
-				{
-					title: "Settings",
-					url: "#",
-				},
 			],
 		},
 		{
@@ -115,24 +110,24 @@ const data = {
 		},
 		{
 			title: "Settings",
-			url: "#",
+			url: "",
 			icon: Settings2,
 			items: [
 				{
-					title: "General",
-					url: "#",
+					title: "Account",
+					url: "/settings",
 				},
 				{
-					title: "Team",
-					url: "#",
+					title: "Appearance",
+					url: "/settings/appearance",
 				},
 				{
-					title: "Billing",
-					url: "#",
+					title: "Notifications",
+					url: "/settings/notifications",
 				},
 				{
-					title: "Limits",
-					url: "#",
+					title: "Privacy",
+					url: "/settings/privacy",
 				},
 			],
 		},
@@ -160,14 +155,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
-				<TeamSwitcher teams={data.teams} />
+				<NavUser user={data.user} />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 				<NavProjects projects={data.projects} />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={data.user} />
+				<TeamSwitcher teams={data.teams} />
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

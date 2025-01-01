@@ -47,10 +47,6 @@ const getUserDataFirst = async (req: Request, res: Response): Promise<void> => {
 const signUpUser = async (req: Request, res: Response): Promise<void> => {
 	try {
 		let userCredentials = req.body;
-		console.log(
-			"🚀 ~ file: authController.ts:50 ~ signUpUser ~ userCredentials:",
-			userCredentials
-		);
 
 		const { email, password, confirmPassword } = req.body;
 
