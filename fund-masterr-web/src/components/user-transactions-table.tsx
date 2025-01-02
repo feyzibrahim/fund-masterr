@@ -27,7 +27,7 @@ export function UserTransactionsTable({ users }: { users: User[] }) {
 					<TableRow key={user.id}>
 						<TableCell>
 							<Link
-								href={`/dashboard/user/${user.id}`}
+								href={`/dashboard/transactions/user/${user.id}`}
 								className="text-blue-600 hover:underline"
 							>
 								{user.name}

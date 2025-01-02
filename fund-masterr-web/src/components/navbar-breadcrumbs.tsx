@@ -9,6 +9,7 @@ import {
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import Link from "next/link";
+import { TransactionDatePicker } from "@/app/(user)/dashboard/transactions/user/components/transaction-date-picker";
 
 export default function NavbarBreadCrumbs() {
 	const pathname = usePathname();
@@ -16,9 +17,9 @@ export default function NavbarBreadCrumbs() {
 	let path = "";
 
 	return (
-		<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+		<header className="flex h-16 shrink-0 items-center justify-between px-5 gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
 			<div className="flex items-center gap-2 px-4">
-				<SidebarTrigger className="-ml-1 w-4 h-4" />
+				<SidebarTrigger className="w-4 h-4" />
 				<Separator orientation="vertical" className="mr-2 h-4" />
 				<Breadcrumb>
 					<BreadcrumbList>
@@ -48,6 +49,7 @@ export default function NavbarBreadCrumbs() {
 					</BreadcrumbList>
 				</Breadcrumb>
 			</div>
+			<TransactionDatePicker />
 		</header>
 	);
 }

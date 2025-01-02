@@ -35,7 +35,9 @@ export function ArchivedContactList() {
 						<TableCell>{contact.phone}</TableCell>
 						<TableCell>
 							<Button asChild variant="outline" size="sm">
-								<Link href={`/contacts/${contact.id}`}>View Details</Link>
+								<Link href={`/dashboard/contacts/${contact.id}`}>
+									View Details
+								</Link>
 							</Button>
 						</TableCell>
 					</TableRow>

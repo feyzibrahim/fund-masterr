@@ -1,16 +1,16 @@
 "use client";
 
-import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function TransactionDatePicker() {
-	const [date, setDate] = React.useState<Date>();
+	const [date, setDate] = useState<Date | undefined>(new Date());
 
 	return (
 		<Popover>
@@ -27,7 +27,15 @@ export function TransactionDatePicker() {
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">
-				<Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+				<Calendar
+					mode="single"
+					selected={date}
+					onSelect={setDate}
+					initialFocus
+					disabled={(date) =>
+						date > new Date() || date < new Date("1900-01-01")
+					}
+				/>
 			</PopoverContent>
 		</Popover>
 	);

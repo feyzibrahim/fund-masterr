@@ -31,7 +31,7 @@ export default function TutorialsPage() {
 					</CardContent>
 					<CardFooter>
 						<Button asChild>
-							<Link href="/docs/tutorials/account-management">
+							<Link href="/dashboard/docs/tutorials/account-management">
 								Read More
 							</Link>
 						</Button>
@@ -50,7 +50,7 @@ export default function TutorialsPage() {
 					</CardContent>
 					<CardFooter>
 						<Button asChild>
-							<Link href="/docs/tutorials/advanced-reporting">
+							<Link href="/dashboard/docs/tutorials/advanced-reporting">
 								Read More
 							</Link>
 						</Button>
@@ -67,7 +67,7 @@ export default function TutorialsPage() {
 					</CardContent>
 					<CardFooter>
 						<Button asChild>
-							<Link href="/docs/tutorials/security-practices">
+							<Link href="/dashboard/docs/tutorials/security-practices">
 								Read More
 							</Link>
 						</Button>
@@ -84,7 +84,9 @@ export default function TutorialsPage() {
 					</CardContent>
 					<CardFooter>
 						<Button asChild>
-							<Link href="/docs/tutorials/mobile-app">Read More</Link>
+							<Link href="/dashboard/docs/tutorials/mobile-app">
+								Read More
+							</Link>
 						</Button>
 					</CardFooter>
 				</Card>
