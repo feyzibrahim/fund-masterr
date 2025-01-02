@@ -5,16 +5,22 @@ import { redirectUrls } from "./lib/constants";
 
 export async function middleware(request: NextRequest) {
 	const path = request.nextUrl.pathname;
-	const publicPaths = ["/login", "/not-authorized", "/logo.png", "/file-upload"];
+	const publicPaths = [
+		"/",
+		"/login",
+		"/sign-up",
+		"/not-authorized",
+		"/logo.png",
+		"/file-upload",
+	];
 	const isPublicPath = publicPaths.includes(path);
 
 	if (isPublicPath) {
 		return NextResponse.next();
 	}
 	const session = await getSession();
-	console.log("🚀 ~ file: middleware.ts:15 ~ middleware ~ session:", session);
 	if (!session) {
-		return NextResponse.redirect(new URL("/login", request.nextUrl));
+		return NextResponse.redirect(new URL("/", request.nextUrl));
 	}
 	const { role } = session;
 	const allowedUrls = redirectUrls.find((url) => url.role === role)?.allowedUrls;
