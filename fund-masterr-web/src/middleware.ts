@@ -12,6 +12,7 @@ export async function middleware(request: NextRequest) {
 		"/not-authorized",
 		"/logo.png",
 		"/file-upload",
+		"/_next",
 	];
 	const isPublicPath = publicPaths.includes(path);
 
