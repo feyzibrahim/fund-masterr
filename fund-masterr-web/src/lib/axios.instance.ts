@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { getAccessToken } from "./auth-utils";
 
 // Create an Axios instance
 const axiosInstance: AxiosInstance = axios.create({
@@ -11,10 +12,10 @@ const axiosInstance: AxiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-	// const accessToken = await getAccessToken();
-	// if (accessToken) {
-	// 	config.headers.Authorization = `Bearer ${accessToken}`;
-	// }
+	const accessToken = await getAccessToken();
+	if (accessToken) {
+		config.headers.Authorization = `Bearer ${accessToken}`;
+	}
 	return config;
 });
 
