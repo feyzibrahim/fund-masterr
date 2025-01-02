@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
 		"/not-authorized",
 		"/logo.png",
 		"/file-upload",
-		"/_next",
 	];
 	const isPublicPath = publicPaths.includes(path);
 
@@ -39,5 +38,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/((?!api|_next/static|_next/image|images|favicon.ico).*)"],
+	matcher: [
+		"/((?!api|_next/static|_next/image|favicon.ico|.*\\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|otf|eot|mp4|webm|pdf)).*)",
+	],
 };
