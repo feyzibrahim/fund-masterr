@@ -6,16 +6,18 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarHeader,
+	SidebarMenuButton,
 	SidebarRail,
 } from "@/components/ui/sidebar";
 import {
 	AudioWaveform,
 	BookOpen,
-	Bot,
 	Command,
+	Contact2,
 	GalleryVerticalEnd,
+	IndianRupee,
+	LayoutDashboard,
 	Settings2,
-	SquareTerminal,
 } from "lucide-react";
 import * as React from "react";
 
@@ -45,37 +47,50 @@ const data = {
 	],
 	navMain: [
 		{
-			title: "Playground",
+			title: "Transactions",
 			url: "#",
-			icon: SquareTerminal,
+			icon: IndianRupee,
 			isActive: true,
 			items: [
 				{
-					title: "History",
-					url: "#",
+					title: "All",
+					url: "/dashboard/transactions",
 				},
 				{
-					title: "Starred",
-					url: "#",
+					title: "History",
+					url: "/dashboard/transactions/history",
+				},
+				{
+					title: "Cancelled",
+					url: "/dashboard/transactions/cancelled",
 				},
 			],
 		},
 		{
 			title: "Contacts",
 			url: "#",
-			icon: Bot,
+			icon: Contact2,
+			isActive: true,
 			items: [
 				{
-					title: "View All",
-					url: "/contacts",
+					title: "All",
+					url: "/dashboard/contacts",
+				},
+				{
+					title: "Payers",
+					url: "/dashboard/contacts/payers",
+				},
+				{
+					title: "Agents",
+					url: "/dashboard/contacts/agents",
 				},
 				{
 					title: "Create",
-					url: "/contacts/create",
+					url: "/dashboard/contacts/create",
 				},
 				{
 					title: "Archived",
-					url: "/contacts/archived",
+					url: "/dashboard/contacts/archived",
 				},
 			],
 		},
@@ -86,19 +101,19 @@ const data = {
 			items: [
 				{
 					title: "Introduction",
-					url: "/docs",
+					url: "/dashboard/docs",
 				},
 				{
 					title: "Get Started",
-					url: "/docs/get-started",
+					url: "/dashboard/docs/get-started",
 				},
 				{
 					title: "Tutorials",
-					url: "/docs/tutorials",
+					url: "/dashboard/docs/tutorials",
 				},
 				{
 					title: "Changelog",
-					url: "/docs/change-log",
+					url: "/dashboard/docs/change-log",
 				},
 			],
 		},
@@ -109,19 +124,19 @@ const data = {
 			items: [
 				{
 					title: "Account",
-					url: "/settings",
+					url: "/dashboard/settings",
 				},
 				{
 					title: "Appearance",
-					url: "/settings/appearance",
+					url: "/dashboard/settings/appearance",
 				},
 				{
 					title: "Notifications",
-					url: "/settings/notifications",
+					url: "/dashboard/settings/notifications",
 				},
 				{
 					title: "Privacy",
-					url: "/settings/privacy",
+					url: "/dashboard/settings/privacy",
 				},
 			],
 		},

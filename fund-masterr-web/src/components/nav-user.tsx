@@ -25,6 +25,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export function NavUser({
 	user,
@@ -83,30 +84,32 @@ export function NavUser({
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<Sparkles />
+							<DropdownMenuItem className="flex items-center gap-3">
+								<Sparkles className="w-4 h-4" />
 								Upgrade to Pro
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<BadgeCheck />
+							<DropdownMenuItem className="flex items-center gap-3">
+								<BadgeCheck className="w-4 h-4" />
 								Account
 							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<CreditCard />
+							<DropdownMenuItem className="flex items-center gap-3">
+								<CreditCard className="w-4 h-4" />
 								Billing
 							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Bell />
+							<DropdownMenuItem className="flex items-center gap-3">
+								<Bell className="w-4 h-4" />
 								Notifications
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<LogOut />
-							Log out
+						<DropdownMenuItem className="flex items-center gap-3" asChild>
+							<Link href="/">
+								<LogOut className="w-4 h-4" />
+								Log out
+							</Link>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

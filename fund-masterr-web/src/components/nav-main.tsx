@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, LayoutDashboard, type LucideIcon } from "lucide-react";
 
 import {
 	Collapsible,
@@ -39,6 +39,19 @@ export function NavMain({ items }: Props) {
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>
+			<SidebarMenuButton asChild>
+				<Link
+					href="/dashboard"
+					className={
+						pathname === "/dashboard"
+							? "bg-muted hover:bg-muted"
+							: "hover:bg-transparent hover:underline"
+					}
+				>
+					<LayoutDashboard />
+					<span>Dashboard</span>
+				</Link>
+			</SidebarMenuButton>
 			<SidebarMenu>
 				{items.map((item) => (
 					<Collapsible
