@@ -6,7 +6,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { formatCurrency, formatDate } from "@/lib/util";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { Transaction } from "@/lib/data";
 
 export function AllTransactionsTable({ transactions }: { transactions: Transaction[] }) {

@@ -42,15 +42,12 @@ export default function LoginForm() {
 		setIsLoading(true);
 		setError(null);
 
-		const result = await login(values);
-
-		if (result.success) {
-			router.push("/dashboard");
-		} else {
-			setError(result.error || "An error occurred during login");
+		try {
+			router.push(await login(values));
+		} catch (error: any) {
+			setError(error || "An error occurred during login");
+			setIsLoading(false);
 		}
-
-		setIsLoading(false);
 	}
 
 	return (

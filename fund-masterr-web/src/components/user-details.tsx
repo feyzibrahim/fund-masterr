@@ -1,5 +1,5 @@
 import { User } from "@/lib/data";
-import { formatCurrency } from "@/lib/util";
+import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent } from "./ui/card";
 
 type UserDetailsProps = {

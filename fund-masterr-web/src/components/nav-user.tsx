@@ -25,7 +25,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
+import { logout } from "@/lib/auth-utils";
 
 export function NavUser({
 	user,
@@ -37,6 +37,10 @@ export function NavUser({
 	};
 }) {
 	const { isMobile } = useSidebar();
+
+	const handleLogout = async () => {
+		await logout();
+	};
 
 	return (
 		<SidebarMenu>
@@ -105,11 +109,12 @@ export function NavUser({
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem className="flex items-center gap-3" asChild>
-							<Link href="/">
-								<LogOut className="w-4 h-4" />
-								Log out
-							</Link>
+						<DropdownMenuItem
+							className="flex items-center gap-3"
+							onClick={handleLogout}
+						>
+							<LogOut className="w-4 h-4" />
+							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

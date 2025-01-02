@@ -7,7 +7,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Transaction } from "@/lib/data";
-import { formatCurrency, formatDate } from "@/lib/util";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 export function CancelledTransactionsTable({
 	transactions,

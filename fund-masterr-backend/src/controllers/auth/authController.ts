@@ -6,11 +6,11 @@ import validator from "validator";
 import User from "../../model/userModel";
 
 // Create a token
-const createToken = (_id: string): string => {
+const createToken = (_id: string, role: string): string => {
 	if (!process.env.SECRET) {
 		throw new Error("SECRET is not defined in environment variables");
 	}
-	return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "1d" });
+	return jwt.sign({ _id, role }, process.env.SECRET, { expiresIn: "1d" });
 };
 
 // Cookie configuration
@@ -89,11 +89,9 @@ const signUpUser = async (req: Request, res: Response): Promise<void> => {
 
 		user.password = ""; // Clear the password before returning
 
-		const token = createToken(user._id);
+		const token = createToken(user._id, user.role);
 
-		res.cookie("user_token", token, cookieConfig);
-
-		res.status(200).json(user);
+		res.status(200).json({ accessToken: token, refreshToken: token });
 	} catch (error: any) {
 		res.status(400).json({ error: error.message });
 	}
@@ -128,20 +126,12 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
 
 		user.password = "";
 
-		const token = createToken(user._id);
+		const token = createToken(user._id, user.role);
 
-		res.cookie("user_token", token, cookieConfig);
-
-		res.status(200).json(user);
+		res.status(200).json({ accessToken: token, refreshToken: token });
 	} catch (error: any) {
 		res.status(401).json({ error: error.message });
 	}
-};
-
-// Log out a user
-const logoutUser = async (req: Request, res: Response): Promise<void> => {
-	res.clearCookie("user_token");
-	res.status(200).json({ msg: "Logged out Successfully" });
 };
 
 // Edit user details
@@ -229,4 +219,4 @@ const changePassword = async (req: Request, res: Response): Promise<void> => {
 	}
 };
 
-export { changePassword, editUser, getUserDataFirst, loginUser, logoutUser, signUpUser };
+export { changePassword, editUser, getUserDataFirst, loginUser, signUpUser };
