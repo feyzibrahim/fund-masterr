@@ -1,10 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { AxiosRequest } from "./axios.instance";
 import { validateJwt } from "./jwt-util";
-import { NextResponse } from "next/server";
-import { redirect } from "next/navigation";
 
 export const refreshToken = async () => {
 	const refreshToken = cookies().get("refreshToken")?.value;
@@ -38,7 +37,6 @@ export const getSession = async () => {
 
 export const getAccessToken = async () => {
 	const token = cookies().get("accessToken")?.value;
-	console.log("🚀 ~ file: auth-utils.ts:37 ~ getAccessToken ~ token:", token);
 	if (!token) {
 		return null;
 	}

@@ -43,9 +43,9 @@ export default function LoginForm() {
 		setError(null);
 
 		try {
-			router.push(await login(values));
+			await login(values);
 		} catch (error: any) {
-			setError(error || "An error occurred during login");
+			setError(error.message || "An error occurred during login");
 			setIsLoading(false);
 		}
 	}
