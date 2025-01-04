@@ -9,7 +9,7 @@ export default function PayersPage() {
 				<AddNewPayerModal />
 			</div>
 			<div className="rounded-md border">
-				<ContactList />
+				<ContactList type="payer" />
 			</div>
 		</div>
 	);

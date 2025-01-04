@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-export function SearchAgentForm() {
+export function SearchContactForm() {
 	const [phoneNumber, setPhoneNumber] = useState("");
 
 	const handleSubmit = (e: React.FormEvent) => {

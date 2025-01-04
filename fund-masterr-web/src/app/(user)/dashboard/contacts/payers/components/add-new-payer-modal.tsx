@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { SearchPayerForm } from "./search-payer-form";
-import { CreatePayerForm } from "./create-payer-form";
+import { SearchContactForm } from "../../components/search-agent-form";
+import { CreateContactForm } from "../../components/create-contact-form";
 
 export function AddNewPayerModal() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -31,10 +31,10 @@ export function AddNewPayerModal() {
 						<TabsTrigger value="create">Create Payer</TabsTrigger>
 					</TabsList>
 					<TabsContent value="search">
-						<SearchPayerForm />
+						<SearchContactForm />
 					</TabsContent>
 					<TabsContent value="create">
-						<CreatePayerForm />
+						<CreateContactForm setIsOpen={setIsOpen} type="payer" />
 					</TabsContent>
 				</Tabs>
 			</DialogContent>

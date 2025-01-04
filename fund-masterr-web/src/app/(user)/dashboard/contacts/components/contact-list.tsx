@@ -8,17 +8,25 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { AxiosRequest } from "@/lib/axios.instance";
+import { IContact } from "@/types/contact-types";
 
-// This is a mock data array. In a real application, you'd fetch this data from an API or database.
-const contacts = [
-	{ id: 1, name: "John Doe", email: "john@example.com", phone: "123-456-7890" },
-	{ id: 2, name: "Jane Smith", email: "jane@example.com", phone: "098-765-4321" },
-	{ id: 3, name: "Alice Johnson", email: "alice@example.com", phone: "555-555-5555" },
-	{ id: 4, name: "Bob Williams", email: "bob@example.com", phone: "444-444-4444" },
-	// Add more mock contacts as needed
-];
+interface Props {
+	type?: "agent" | "payer" | "archive";
+}
 
-export function ContactList() {
+export async function ContactList({ type }: Props) {
+	let contacts: IContact[] = [];
+	let errorMessage = "";
+
+	try {
+		contacts = await AxiosRequest.get<IContact[]>(
+			`/contact${type ? `?type=${type}` : ""}`
+		);
+	} catch (error: any) {
+		errorMessage = error.message ?? "An error occurred while fetching contacts.";
+	}
+
 	return (
 		<Table>
 			<TableHeader>
@@ -30,20 +38,36 @@ export function ContactList() {
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{contacts.map((contact) => (
-					<TableRow key={contact.id}>
-						<TableCell>{contact.name}</TableCell>
-						<TableCell>{contact.email}</TableCell>
-						<TableCell>{contact.phone}</TableCell>
-						<TableCell>
-							<Button asChild variant="outline" size="sm">
-								<Link href={`/dashboard/contacts/${contact.id}`}>
-									View Details
-								</Link>
-							</Button>
+				{errorMessage ? (
+					<TableRow>
+						<TableCell colSpan={4} className="text-center text-red-500">
+							{errorMessage}
 						</TableCell>
 					</TableRow>
-				))}
+				) : contacts.length === 0 ? (
+					<TableRow>
+						<TableCell colSpan={4} className="text-center">
+							No {type}s are added. Please add a new one.
+						</TableCell>
+					</TableRow>
+				) : (
+					contacts.map((contact) => (
+						<TableRow key={contact._id}>
+							<TableCell>
+								{contact.firstName} {contact.lastName ?? ""}
+							</TableCell>
+							<TableCell>{contact.email ?? ""}</TableCell>
+							<TableCell>{contact.phone}</TableCell>
+							<TableCell>
+								<Button asChild variant="outline" size="sm">
+									<Link href={`/dashboard/contacts/${contact._id}`}>
+										View Details
+									</Link>
+								</Button>
+							</TableCell>
+						</TableRow>
+					))
+				)}
 			</TableBody>
 		</Table>
 	);

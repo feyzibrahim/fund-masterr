@@ -35,7 +35,7 @@ class AxiosRequestClass {
 			const { data } = await axiosInstance.get(url, params);
 			return data;
 		} catch (error: any) {
-			if (error) {
+			if (error.response?.data || error?.message || error?.error) {
 				throw new Error(error.response?.data || error?.message || error?.error);
 			} else {
 				throw new Error("An unexpected error occurred");

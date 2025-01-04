@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { SearchAgentForm } from "./search-agent-form";
-import { CreateAgentForm } from "./create-agent-form";
+import { CreateContactForm } from "../../components/create-contact-form";
+import { SearchContactForm } from "../../components/search-agent-form";
 
 export function AddNewAgentModal() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -31,10 +31,10 @@ export function AddNewAgentModal() {
 						<TabsTrigger value="create">Create Agent</TabsTrigger>
 					</TabsList>
 					<TabsContent value="search">
-						<SearchAgentForm />
+						<SearchContactForm />
 					</TabsContent>
 					<TabsContent value="create">
-						<CreateAgentForm />
+						<CreateContactForm setIsOpen={setIsOpen} type="agent" />
 					</TabsContent>
 				</Tabs>
 			</DialogContent>

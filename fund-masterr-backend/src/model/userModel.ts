@@ -7,8 +7,7 @@ interface IUser extends Document {
 	email: string;
 	password: string;
 	phoneNumber?: number;
-	dateOfBirth?: Date;
-	role: "user" | "admin" | "superAdmin";
+	role: "agent" | "payer" | "admin";
 	isActive: boolean;
 	profileImgURL?: string;
 	isEmailVerified?: boolean;
@@ -20,15 +19,14 @@ const UserSchema: Schema<IUser> = new Schema(
 	{
 		firstName: { type: String },
 		lastName: { type: String },
-		email: { type: String, required: true, unique: true },
-		password: { type: String },
+		email: { type: String, unique: true },
+		password: { type: String, required: true, unique: true },
 		phoneNumber: { type: Number },
-		dateOfBirth: { type: Date },
 		role: {
 			type: String,
 			required: true,
-			enum: ["user", "admin", "superAdmin"],
-			default: "user",
+			enum: ["agent", "payer", "admin"],
+			default: "agent",
 		},
 		isActive: { type: Boolean, required: true },
 		profileImgURL: { type: String },

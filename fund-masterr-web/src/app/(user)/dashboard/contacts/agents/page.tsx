@@ -1,7 +1,7 @@
 import { ContactList } from "../components/contact-list";
 import { AddNewAgentModal } from "./components/add-new-agent-modal";
 
-export default function AgentsPage() {
+export default async function AgentsPage() {
 	return (
 		<div>
 			<div className="flex items-center justify-between">
@@ -9,7 +9,7 @@ export default function AgentsPage() {
 				<AddNewAgentModal />
 			</div>
 			<div className="rounded-md border">
-				<ContactList />
+				<ContactList type="agent" />
 			</div>
 		</div>
 	);

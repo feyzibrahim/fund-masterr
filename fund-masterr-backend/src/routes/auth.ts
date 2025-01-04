@@ -1,13 +1,13 @@
 import express from "express";
 // import upload from "../middleware/upload";
-import { loginUser, signUpUser } from "../controllers/auth/authController";
+import { loginUser, signUpUser } from "../controllers/auth/auth.controller";
 import {
 	forgotPassword,
 	newPassword,
 	sendOTP,
 	validateForgotOTP,
 	validateOTP,
-} from "../controllers/auth/otpController";
+} from "../controllers/auth/otp.controller";
 
 const router = express.Router();
 
