@@ -5,7 +5,7 @@ import { Card, CardContent } from "./ui/card";
 type UserDetailsProps = {
 	user: User;
 	dailyStats: {
-		transactionCount: number;
+		sheetCount: number;
 		cancelledCount: number;
 		totalCancelled: number;
 		netTotal: number;
@@ -42,17 +42,11 @@ export function UserDetails({ user, dailyStats, onSetOldBalance }: UserDetailsPr
 				</div>
 				<div className="grid grid-cols-3 gap-4 mt-6">
 					<div>
-						<p className="text-foreground-secondary">
-							Today&apos;s Transactions
-						</p>
-						<p className="text-xl font-semibold">
-							{dailyStats.transactionCount}
-						</p>
+						<p className="text-foreground-secondary">Today&apos;s Sheets</p>
+						<p className="text-xl font-semibold">{dailyStats.sheetCount}</p>
 					</div>
 					<div>
-						<p className="text-foreground-secondary">
-							Cancelled Transactions
-						</p>
+						<p className="text-foreground-secondary">Cancelled Sheets</p>
 						<p className="text-xl font-semibold">
 							{dailyStats.cancelledCount}
 						</p>

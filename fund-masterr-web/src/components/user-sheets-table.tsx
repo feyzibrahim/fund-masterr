@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export function UserTransactionsTable({ users }: { users: User[] }) {
+export function UserSheetsTable({ users }: { users: User[] }) {
 	return (
 		<Table>
 			<TableHeader>
@@ -18,8 +18,8 @@ export function UserTransactionsTable({ users }: { users: User[] }) {
 					<TableHead>Name</TableHead>
 					<TableHead>Email</TableHead>
 					<TableHead>Balance</TableHead>
-					<TableHead>Last Transaction</TableHead>
-					<TableHead>Last Transaction Time</TableHead>
+					<TableHead>Last Sheets</TableHead>
+					<TableHead>Last Sheet Time</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -27,7 +27,7 @@ export function UserTransactionsTable({ users }: { users: User[] }) {
 					<TableRow key={user.id}>
 						<TableCell>
 							<Link
-								href={`/dashboard/transactions/user/${user.id}`}
+								href={`/dashboard/sheets/user/${user.id}`}
 								className="text-blue-600 hover:underline"
 							>
 								{user.name}
@@ -36,18 +36,18 @@ export function UserTransactionsTable({ users }: { users: User[] }) {
 						<TableCell>{user.email}</TableCell>
 						<TableCell>{formatCurrency(user.balance)}</TableCell>
 						<TableCell>
-							{formatCurrency(user.lastTransaction.amount)}{" "}
+							{formatCurrency(user.lastSheet.amount)}{" "}
 							<span
 								className={
-									user.lastTransaction.type === "credit"
+									user.lastSheet.type === "credit"
 										? "text-green-600"
 										: "text-red-600"
 								}
 							>
-								({user.lastTransaction.type})
+								({user.lastSheet.type})
 							</span>
 						</TableCell>
-						<TableCell>{formatDate(user.lastTransaction.date)}</TableCell>
+						<TableCell>{formatDate(user.lastSheet.date)}</TableCell>
 					</TableRow>
 				))}
 			</TableBody>

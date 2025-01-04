@@ -4,14 +4,14 @@ export type User = {
 	email: string;
 	balance: number;
 	oldBalance?: number;
-	lastTransaction: {
+	lastSheet: {
 		amount: number;
 		type: "credit" | "debit";
 		date: string;
 	};
 };
 
-export type Transaction = {
+export type Sheet = {
 	id: string;
 	userId: string;
 	amount: number;
@@ -27,7 +27,7 @@ export const users: User[] = [
 		email: "john@example.com",
 		balance: 5000,
 		oldBalance: 4500,
-		lastTransaction: {
+		lastSheet: {
 			amount: 100,
 			type: "credit",
 			date: "2023-06-15T10:30:00Z",
@@ -39,7 +39,7 @@ export const users: User[] = [
 		email: "jane@example.com",
 		balance: 7500,
 		oldBalance: 8000,
-		lastTransaction: {
+		lastSheet: {
 			amount: 250,
 			type: "debit",
 			date: "2023-06-14T15:45:00Z",
@@ -47,7 +47,7 @@ export const users: User[] = [
 	},
 ];
 
-export const transactions: Transaction[] = [
+export const sheets: Sheet[] = [
 	{
 		id: "t1",
 		userId: "1",
@@ -114,13 +114,13 @@ export const transactions: Transaction[] = [
 	},
 ];
 
-export function getUserTransactions(userId: string, date: string): Transaction[] {
+export function getUserSheets(userId: string, date: string): Sheet[] {
 	const startOfDay = new Date(date);
 	startOfDay.setHours(0, 0, 0, 0);
 	const endOfDay = new Date(date);
 	endOfDay.setHours(23, 59, 59, 999);
 
-	return transactions.filter((t) => t.userId === userId);
+	return sheets.filter((t) => t.userId === userId);
 }
 
 export function getUserById(userId: string): User | undefined {
@@ -128,23 +128,19 @@ export function getUserById(userId: string): User | undefined {
 }
 
 export function calculateDailyStats(userId: string, date: string) {
-	const dailyTransactions = getUserTransactions(userId, date);
-	const completedTransactions = dailyTransactions.filter(
-		(t) => t.status === "completed"
-	);
-	const cancelledTransactions = dailyTransactions.filter(
-		(t) => t.status === "cancelled"
-	);
+	const dailySheets = getUserSheets(userId, date);
+	const completedSheets = dailySheets.filter((t) => t.status === "completed");
+	const cancelledSheets = dailySheets.filter((t) => t.status === "cancelled");
 
-	const totalCompleted = completedTransactions.reduce(
+	const totalCompleted = completedSheets.reduce(
 		(sum, t) => sum + (t.type === "credit" ? t.amount : -t.amount),
 		0
 	);
-	const totalCancelled = cancelledTransactions.reduce((sum, t) => sum + t.amount, 0);
+	const totalCancelled = cancelledSheets.reduce((sum, t) => sum + t.amount, 0);
 
 	return {
-		transactionCount: dailyTransactions.length,
-		cancelledCount: cancelledTransactions.length,
+		sheetCount: dailySheets.length,
+		cancelledCount: cancelledSheets.length,
 		totalCancelled,
 		netTotal: totalCompleted,
 	};

@@ -7,9 +7,9 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Transaction } from "@/lib/data";
+import { Sheet } from "@/lib/data";
 
-export function AllTransactionsTable({ transactions }: { transactions: Transaction[] }) {
+export function AllSheetsTable({ sheets }: { sheets: Sheet[] }) {
 	return (
 		<Table>
 			<TableHeader>
@@ -21,22 +21,22 @@ export function AllTransactionsTable({ transactions }: { transactions: Transacti
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{transactions.map((transaction) => (
-					<TableRow key={transaction.id}>
-						<TableCell>{formatCurrency(transaction.amount)}</TableCell>
+				{sheets.map((sheet) => (
+					<TableRow key={sheet.id}>
+						<TableCell>{formatCurrency(sheet.amount)}</TableCell>
 						<TableCell>
 							<span
 								className={
-									transaction.type === "credit"
+									sheet.type === "credit"
 										? "text-green-600"
 										: "text-red-600"
 								}
 							>
-								{transaction.type}
+								{sheet.type}
 							</span>
 						</TableCell>
-						<TableCell>{formatDate(transaction.date)}</TableCell>
-						<TableCell>{transaction.status}</TableCell>
+						<TableCell>{formatDate(sheet.date)}</TableCell>
+						<TableCell>{sheet.status}</TableCell>
 					</TableRow>
 				))}
 			</TableBody>

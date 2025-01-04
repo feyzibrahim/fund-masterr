@@ -9,7 +9,7 @@ import {
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import Link from "next/link";
-import { TransactionDatePicker } from "@/app/(user)/dashboard/transactions/user/components/transaction-date-picker";
+import { TransactionDatePicker } from "./transaction-date-picker";
 
 export default function NavbarBreadCrumbs() {
 	const pathname = usePathname();

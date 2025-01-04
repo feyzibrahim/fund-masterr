@@ -1,4 +1,4 @@
-import { Transaction } from "@/lib/data";
+import { Sheet } from "@/lib/data";
 import {
 	Table,
 	TableBody,
@@ -10,15 +10,15 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
-type DailyTransactionsProps = {
-	transactions: Transaction[];
+type DailySheetsProps = {
+	transactions: Sheet[];
 };
 
-export function DailyTransactions({ transactions }: DailyTransactionsProps) {
+export function DailySheets({ transactions }: DailySheetsProps) {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Today&apos;s Transactions</CardTitle>
+				<CardTitle>Today&apos;s Sheets</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Table>

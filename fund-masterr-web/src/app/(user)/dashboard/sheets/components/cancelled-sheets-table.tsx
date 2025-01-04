@@ -6,14 +6,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Transaction } from "@/lib/data";
+import { Sheet } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export function CancelledTransactionsTable({
-	transactions,
-}: {
-	transactions: Transaction[];
-}) {
+export function CancelledSheetsTable({ sheets }: { sheets: Sheet[] }) {
 	return (
 		<Table>
 			<TableHeader>
@@ -24,21 +20,21 @@ export function CancelledTransactionsTable({
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{transactions.map((transaction) => (
-					<TableRow key={transaction.id}>
-						<TableCell>{formatCurrency(transaction.amount)}</TableCell>
+				{sheets.map((sheet) => (
+					<TableRow key={sheet.id}>
+						<TableCell>{formatCurrency(sheet.amount)}</TableCell>
 						<TableCell>
 							<span
 								className={
-									transaction.type === "credit"
+									sheet.type === "credit"
 										? "text-green-600"
 										: "text-red-600"
 								}
 							>
-								{transaction.type}
+								{sheet.type}
 							</span>
 						</TableCell>
-						<TableCell>{formatDate(transaction.date)}</TableCell>
+						<TableCell>{formatDate(sheet.date)}</TableCell>
 					</TableRow>
 				))}
 			</TableBody>

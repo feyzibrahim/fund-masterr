@@ -6,7 +6,6 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarHeader,
-	SidebarMenuButton,
 	SidebarRail,
 } from "@/components/ui/sidebar";
 import {
@@ -16,7 +15,7 @@ import {
 	Contact2,
 	GalleryVerticalEnd,
 	IndianRupee,
-	LayoutDashboard,
+	Layers2,
 	Settings2,
 } from "lucide-react";
 import * as React from "react";
@@ -47,22 +46,22 @@ const data = {
 	],
 	navMain: [
 		{
-			title: "Transactions",
+			title: "Sheets",
 			url: "#",
-			icon: IndianRupee,
+			icon: Layers2,
 			isActive: true,
 			items: [
 				{
 					title: "All",
-					url: "/dashboard/transactions",
+					url: "/dashboard/sheets",
 				},
 				{
 					title: "History",
-					url: "/dashboard/transactions/history",
+					url: "/dashboard/sheets/history",
 				},
 				{
 					title: "Cancelled",
-					url: "/dashboard/transactions/cancelled",
+					url: "/dashboard/sheets/cancelled",
 				},
 			],
 		},
@@ -83,10 +82,6 @@ const data = {
 				{
 					title: "Agents",
 					url: "/dashboard/contacts/agents",
-				},
-				{
-					title: "Create",
-					url: "/dashboard/contacts/create",
 				},
 				{
 					title: "Archived",

@@ -1,19 +1,19 @@
 "use client";
 
-import { DailyTransactions } from "@/components/daily-transactions";
+import { DailySheets } from "@/components/daily-sheets";
 import { SetOldBalanceModal } from "@/components/set-old-balance-modal";
 import { UserDetails } from "@/components/user-details";
-import { calculateDailyStats, getUserById, getUserTransactions } from "@/lib/data";
+import { calculateDailyStats, getUserById, getUserSheets } from "@/lib/data";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export default function UserTransactionsPage() {
+export default function UserSheetsPage() {
 	const { id } = useParams();
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const user = getUserById(id as string);
-	const transactions = getUserTransactions(id as string, date);
+	const transactions = getUserSheets(id as string, date);
 	const dailyStats = calculateDailyStats(id as string, date);
 
 	if (!user) {
@@ -27,14 +27,14 @@ export default function UserTransactionsPage() {
 
 	return (
 		<>
-			<h1 className="text-2xl font-bold mb-5">Transactions for {user.name}</h1>
+			<h1 className="text-2xl font-bold mb-5">Sheets for {user.name}</h1>
 			<div className="space-y-5">
 				<UserDetails
 					user={user}
 					dailyStats={dailyStats}
 					onSetOldBalance={() => setIsModalOpen(true)}
 				/>
-				<DailyTransactions transactions={transactions} />
+				<DailySheets transactions={transactions} />
 			</div>
 			<SetOldBalanceModal
 				isOpen={isModalOpen}
