@@ -56,7 +56,7 @@ export async function ContactList({ type }: Props) {
 							<TableCell>
 								{contact.firstName} {contact.lastName ?? ""}
 							</TableCell>
-							<TableCell>{contact.email ?? ""}</TableCell>
+							<TableCell>{contact.email ?? "N/A"}</TableCell>
 							<TableCell>{contact.phone}</TableCell>
 							<TableCell>
 								<Button asChild variant="outline" size="sm">

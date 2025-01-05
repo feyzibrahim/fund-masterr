@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
 		"/",
 		"/login",
 		"/sign-up",
-		"/not-authorized",
+		"/not-found",
 		"/logo.png",
 		"/file-upload",
 		"/_next",
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
 	const isAuthorized =
 		(allowedUrls && allowedUrls.find((url) => path.startsWith(url))) || path === "/";
 	if (!isAuthorized) {
-		return NextResponse.redirect(new URL("/not-authorized", request.nextUrl));
+		return NextResponse.redirect(new URL("/not-found", request.nextUrl));
 	}
 	if (path === "/" && defaultUrl) {
 		return NextResponse.redirect(new URL(defaultUrl, request.nextUrl));
