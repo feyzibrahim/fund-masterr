@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Contact from "../model/contactModel";
+import Contact from "../model/contact.model";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
 
 // Create a new contact

@@ -46,22 +46,22 @@ const data = {
 	],
 	navMain: [
 		{
-			title: "Sheets",
+			title: "Ledger",
 			url: "#",
 			icon: Layers2,
 			isActive: true,
 			items: [
 				{
 					title: "All",
-					url: "/dashboard/sheets",
+					url: "/dashboard/ledger",
 				},
 				{
-					title: "History",
-					url: "/dashboard/sheets/history",
+					title: "Sheets",
+					url: "/dashboard/ledger/sheets",
 				},
 				{
 					title: "Cancelled",
-					url: "/dashboard/sheets/cancelled",
+					url: "/dashboard/ledger/cancelled",
 				},
 			],
 		},

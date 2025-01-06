@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import validator from "validator";
-import OTP from "../../model/otpModel";
-import User from "../../model/userModel";
+import OTP from "../../model/otp.model";
+import User from "../../model/user.model";
 // import { passwordChangedMail, sendOTPMail } from "../../util/mailFunction";
 
 // Sending OTP to email for validation

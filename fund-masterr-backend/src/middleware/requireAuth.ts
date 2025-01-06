@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import User from "../model/userModel";
+import User from "../model/user.model";
 
 interface JwtPayload {
 	_id: string;

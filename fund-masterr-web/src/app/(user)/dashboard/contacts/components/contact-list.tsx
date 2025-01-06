@@ -32,8 +32,8 @@ export async function ContactList({ type }: Props) {
 			<TableHeader>
 				<TableRow>
 					<TableHead>Name</TableHead>
-					<TableHead>Email</TableHead>
 					<TableHead>Phone</TableHead>
+					<TableHead>Email</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -56,8 +56,8 @@ export async function ContactList({ type }: Props) {
 							<TableCell>
 								{contact.firstName} {contact.lastName ?? ""}
 							</TableCell>
-							<TableCell>{contact.email ?? "N/A"}</TableCell>
 							<TableCell>{contact.phone}</TableCell>
+							<TableCell>{contact.email ?? "N/A"}</TableCell>
 							<TableCell>
 								<Button asChild variant="outline" size="sm">
 									<Link href={`/dashboard/contacts/${contact._id}`}>

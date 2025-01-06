@@ -34,8 +34,8 @@ export function ContactDetails({ contact }: { contact: IContact }) {
 		setIsEditing(false);
 	};
 
-	const handleDelete = () => {
-		console.log("Deleting contact:", contact._id);
+	const handleArchive = () => {
+		console.log("Archive contact:", contact._id);
 	};
 
 	const handleInputChange = (
@@ -175,20 +175,20 @@ export function ContactDetails({ contact }: { contact: IContact }) {
 						<Button onClick={handleEdit}>Edit</Button>
 						<Dialog>
 							<DialogTrigger asChild>
-								<Button variant="destructive">Delete</Button>
+								<Button variant="destructive">Archive</Button>
 							</DialogTrigger>
 							<DialogContent>
 								<DialogHeader>
 									<DialogTitle>
-										Are you sure you want to delete this contact?
+										Are you sure you want to archive this contact?
 									</DialogTitle>
 								</DialogHeader>
 								<div className="flex justify-end space-x-2 mt-4">
 									<Button variant="outline" onClick={() => {}}>
 										Cancel
 									</Button>
-									<Button variant="destructive" onClick={handleDelete}>
-										Delete
+									<Button variant="destructive" onClick={handleArchive}>
+										Archive
 									</Button>
 								</div>
 							</DialogContent>

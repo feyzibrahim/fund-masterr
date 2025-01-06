@@ -1,15 +1,15 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "Transactions",
-	description: "Manage your account transactions here.",
+	title: "Ledger",
+	description: "Manage your ledger here.",
 };
 
-interface TransactionsLayoutProps {
+interface LedgerLayoutProps {
 	children: React.ReactNode;
 }
 
-export default function TransactionsLayout({ children }: TransactionsLayoutProps) {
+export default function LedgerLayout({ children }: LedgerLayoutProps) {
 	return (
 		<div className="container mx-auto space-y-6 p-10 pb-16 md:block">{children}</div>
 	);

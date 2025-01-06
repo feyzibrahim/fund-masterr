@@ -1,7 +1,7 @@
 import { Request } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
-import User from "../model/userModel";
+import User from "../model/user.model";
 
 export const getUserFromRequest = async (req: Request) => {
 	const authHeader = req.headers.authorization;

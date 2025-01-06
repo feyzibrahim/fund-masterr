@@ -11,7 +11,7 @@ export type User = {
 	};
 };
 
-export type Sheet = {
+export type ISheet = {
 	id: string;
 	userId: string;
 	amount: number;
@@ -47,7 +47,7 @@ export const users: User[] = [
 	},
 ];
 
-export const sheets: Sheet[] = [
+export const sheets: ISheet[] = [
 	{
 		id: "t1",
 		userId: "1",
@@ -114,7 +114,7 @@ export const sheets: Sheet[] = [
 	},
 ];
 
-export function getUserSheets(userId: string, date: string): Sheet[] {
+export function getUserSheets(userId: string, date: string): ISheet[] {
 	const startOfDay = new Date(date);
 	startOfDay.setHours(0, 0, 0, 0);
 	const endOfDay = new Date(date);

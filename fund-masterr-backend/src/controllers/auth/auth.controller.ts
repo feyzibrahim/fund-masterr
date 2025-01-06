@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import validator from "validator";
-import User from "../../model/userModel";
+import User from "../../model/user.model";
 
 // Create a token
 const createToken = (_id: string, role: string): string => {
