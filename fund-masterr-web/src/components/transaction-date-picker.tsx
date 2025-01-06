@@ -1,19 +1,50 @@
 "use client";
 
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverPortal,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation"; // import useSearchParams
+import { useState, useEffect } from "react";
 
 export function TransactionDatePicker() {
-	const [date, setDate] = useState<Date | undefined>(new Date());
+	const router = useRouter();
+	const searchParams = useSearchParams(); // initialize useSearchParams
+	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [open, setOpen] = useState(false); // for controlling popover open state
+
+	// Set the initial date from the query parameter when the component mounts
+	useEffect(() => {
+		const dateParam = searchParams.get("date");
+		if (dateParam) {
+			const urlDate = new Date(dateParam);
+			if (!isNaN(urlDate.getTime())) {
+				setDate(urlDate);
+			}
+		}
+	}, [searchParams]);
+
+	const handleDateSelect = (selectedDate: Date | undefined) => {
+		if (selectedDate) {
+			setDate(selectedDate);
+
+			const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+			router.push(`?date=${formattedDate}`);
+			// Close the popover after selecting a date
+			setOpen(false);
+		}
+	};
 
 	return (
-		<Popover>
+		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
 					variant={"outline"}
@@ -26,17 +57,19 @@ export function TransactionDatePicker() {
 					{date ? format(date, "PPP") : <span>Pick a date</span>}
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-auto p-0" align="start">
-				<Calendar
-					mode="single"
-					selected={date}
-					onSelect={setDate}
-					initialFocus
-					disabled={(date) =>
-						date > new Date() || date < new Date("1900-01-01")
-					}
-				/>
-			</PopoverContent>
+			<PopoverPortal>
+				<PopoverContent className="w-auto p-0" align="start">
+					<Calendar
+						mode="single"
+						selected={date}
+						onSelect={handleDateSelect} // use new handler
+						initialFocus
+						disabled={(date) =>
+							date > new Date() || date < new Date("1900-01-01")
+						}
+					/>
+				</PopoverContent>
+			</PopoverPortal>
 		</Popover>
 	);
 }

@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth-utils";
 import { getLedgerListUser } from "@/lib/get-ledger-list-user";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ILedger } from "@/types/ledger-types";
+import { TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -35,18 +36,19 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 					<TableHead>Old Balance</TableHead>
 					<TableHead>Balance</TableHead>
 					<TableHead>Time</TableHead>
+					<TableHead>Action</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{errorMessage ? (
 					<TableRow>
-						<TableCell colSpan={4} className="text-center text-red-500">
+						<TableCell colSpan={6} className="text-center text-red-500">
 							{errorMessage}
 						</TableCell>
 					</TableRow>
 				) : ledgers.length === 0 ? (
 					<TableRow>
-						<TableCell colSpan={5} className="text-center">
+						<TableCell colSpan={6} className="text-center">
 							No ledgers were created. Please create a new one.
 						</TableCell>
 					</TableRow>
@@ -58,22 +60,10 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 									href={`/dashboard/ledger/${ledger._id}`}
 									className="text-blue-600 hover:underline"
 								>
-									{
-										getLedgerListUser(ledger.users, _id as string)
-											?.firstName
-									}{" "}
-									{
-										getLedgerListUser(ledger.users, _id as string)
-											?.lastName
-									}
+									{ledger.contact.firstName} {ledger.contact.lastName}
 								</Link>
 							</TableCell>
-							<TableCell>
-								{
-									getLedgerListUser(ledger.users, _id as string)
-										?.phoneNumber
-								}
-							</TableCell>
+							<TableCell>{ledger.contact.phone}</TableCell>
 							<TableCell>
 								{ledger.oldBalance && formatCurrency(ledger.oldBalance)}
 							</TableCell>
@@ -82,6 +72,9 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 							</TableCell>
 							<TableCell>
 								{ledger.createdAt && formatDate(ledger.createdAt)}
+							</TableCell>
+							<TableCell>
+								<TrashIcon className="w-4 h-4" />
 							</TableCell>
 						</TableRow>
 					))

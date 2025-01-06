@@ -9,20 +9,21 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { CreateLedgerForm } from "./create-ledger-form";
 
 export function CreateLedgerModal() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+		<Dialog open={isOpen} onOpenChange={setIsOpen} modal>
 			<DialogTrigger asChild>
-				<Button>New Ledger</Button>
+				<Button>Add Ledger</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>New Ledgers</DialogTitle>
+					<DialogTitle>Add Ledgers</DialogTitle>
 				</DialogHeader>
-				<div>Test</div>
+				<CreateLedgerForm setIsOpen={setIsOpen} />
 			</DialogContent>
 		</Dialog>
 	);

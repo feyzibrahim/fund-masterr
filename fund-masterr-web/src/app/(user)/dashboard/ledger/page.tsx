@@ -3,12 +3,21 @@ import { ILedger } from "@/types/ledger-types";
 import { LedgerTable } from "./components/ledger-table";
 import { CreateLedgerModal } from "./components/create-ledger-modal";
 
-export default async function Home() {
+export default async function Home({
+	params,
+	searchParams,
+}: {
+	params: { slug: string };
+	searchParams?: { date: string | undefined };
+}) {
 	let ledgers: ILedger[] = [];
 	let errorMessage = "";
 
 	try {
-		ledgers = await AxiosRequest.get<ILedger[]>(`/ledger`);
+		const date = searchParams?.date;
+		ledgers = await AxiosRequest.get<ILedger[]>(
+			`/ledger${date ? `?date=${date}` : ""}`
+		);
 	} catch (error: any) {
 		errorMessage = error.message ?? "An error occurred while fetching ledgers.";
 	}

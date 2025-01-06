@@ -2,7 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 // Define the interface for the Ledger document
 export interface ILedger extends Document {
-	users: mongoose.Types.ObjectId[]; // References to User model
+	contact: mongoose.Types.ObjectId[]; // References to User model
+	createdBy: mongoose.Types.ObjectId; // Reference to User model
 	oldBalance?: number;
 	balance?: number;
 	// sheetCount?: number;
@@ -12,13 +13,16 @@ export interface ILedger extends Document {
 // Define the schema for the Ledger model
 const LedgerSchema: Schema = new Schema(
 	{
-		users: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
-				required: true,
-			},
-		],
+		contact: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Contact",
+			required: true,
+		},
+		createdBy: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
+		},
 		oldBalance: {
 			type: Number,
 			default: 0,
