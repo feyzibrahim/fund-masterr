@@ -6,10 +6,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Sheet } from "@/lib/data";
+import { ISheet } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export function CancelledSheetsTable({ sheets }: { sheets: Sheet[] }) {
+export function CancelledSheetsTable({ sheets }: { sheets: ISheet[] }) {
 	return (
 		<Table>
 			<TableHeader>

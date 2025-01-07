@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation"; // import useSearchParams
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export function TransactionDatePicker() {
+function TransactionDatePickerReal() {
 	const router = useRouter();
 	const searchParams = useSearchParams(); // initialize useSearchParams
 	const [date, setDate] = useState<Date | undefined>(undefined);
@@ -71,5 +71,13 @@ export function TransactionDatePicker() {
 				</PopoverContent>
 			</PopoverPortal>
 		</Popover>
+	);
+}
+
+export function TransactionDatePicker() {
+	return (
+		<Suspense fallback={<div>Something went wrong</div>}>
+			<TransactionDatePickerReal />
+		</Suspense>
 	);
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Ledger from "../model/ledger.model";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
+import { getStartAndEndDate } from "../util/get-start-and-end-date";
 
 // Create a new ledger
 export const createLedger = async (req: Request, res: Response) => {
@@ -50,27 +51,17 @@ export const getAllLedgers = async (req: Request, res: Response) => {
 
 	try {
 		// Check if a date is passed in the query
-		const queryDate = req.query.date
-			? new Date(req.query.date as string)
-			: new Date();
-
-		// Ensure the date is valid
-		if (isNaN(queryDate.getTime())) {
-			return res.status(400).json({ message: "Invalid date format" });
-		}
-
-		// Set start and end of the day for the specified date
-		const dayStart = new Date(queryDate);
-		dayStart.setHours(0, 0, 0, 0);
-
-		const dayEnd = new Date(queryDate);
-		dayEnd.setHours(23, 59, 59, 999);
+		const { start, end } = getStartAndEndDate(req, res);
 
 		// Fetch ledgers based on the date range
 		const ledgers = await Ledger.find({
 			createdBy: userId,
-			createdAt: { $gte: dayStart, $lte: dayEnd },
-		}).populate("contact");
+			createdAt: { $gte: start, $lte: end },
+		})
+			.sort({
+				createdAt: -1,
+			})
+			.populate("contact");
 
 		res.status(200).json(ledgers);
 	} catch (error) {

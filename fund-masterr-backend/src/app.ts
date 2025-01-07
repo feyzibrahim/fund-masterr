@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/auth";
 import contactRoutes from "./routes/contact";
 import ledgerRoutes from "./routes/ledger";
+import sheetRoutes from "./routes/sheet";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", requireAuth, contactRoutes);
 app.use("/api/ledger", requireAuth, ledgerRoutes);
+app.use("/api/sheet", requireAuth, sheetRoutes);
 
 // Public Api for accessing images
 app.use("/api/img", express.static(__dirname + "/public/"));

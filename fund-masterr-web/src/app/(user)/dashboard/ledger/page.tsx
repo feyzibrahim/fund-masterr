@@ -3,13 +3,12 @@ import { ILedger } from "@/types/ledger-types";
 import { LedgerTable } from "./components/ledger-table";
 import { CreateLedgerModal } from "./components/create-ledger-modal";
 
-export default async function Home({
-	params,
-	searchParams,
-}: {
+interface Props {
 	params: { slug: string };
 	searchParams?: { date: string | undefined };
-}) {
+}
+
+export default async function Home({ params, searchParams }: Props) {
 	let ledgers: ILedger[] = [];
 	let errorMessage = "";
 

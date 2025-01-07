@@ -7,9 +7,9 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Sheet } from "@/lib/data";
+import { ISheet } from "@/lib/data";
 
-export function AllSheetsTable({ sheets }: { sheets: Sheet[] }) {
+export function AllSheetsTable({ sheets }: { sheets: ISheet[] }) {
 	return (
 		<Table>
 			<TableHeader>
