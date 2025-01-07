@@ -27,6 +27,6 @@ router.post("/send-otp", sendOTP);
 router.post("/validate-otp", validateOTP);
 // router.post("/resend-otp", resendOTP);
 
-router.post("/test-app", testApp);
+router.get("/test-app", testApp);
 
 export default router;
