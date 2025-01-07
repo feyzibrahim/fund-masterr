@@ -3,25 +3,77 @@ import mongoose from "mongoose";
 import Sheet from "../model/sheet.model";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
 import { getStartAndEndDate } from "../util/get-start-and-end-date";
+import Ledger from "../model/ledger.model";
 
-// Create a new Sheet
+// Create a new Sheet with a transaction and update ledger balances
 export const createSheet = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
+	const session = await mongoose.startSession(); // Start a session
+	session.startTransaction(); // Begin the transaction
+
 	try {
 		const { amount, status, ledgerId, agent } = req.body;
+
+		let ledgerIds = [ledgerId];
+
+		// If agent is provided, check for an existing ledger or create one
+		if (agent) {
+			const { start, end } = getStartAndEndDate(req, res);
+
+			const existingLedger = await Ledger.findOne(
+				{
+					contact: agent,
+					createdBy: userId,
+					createdAt: { $gte: start, $lte: end },
+				},
+				null,
+				{ session } // Use the session
+			);
+
+			if (existingLedger) {
+				ledgerIds.push(existingLedger._id);
+
+				// Update the ledger's oldBalance and balance
+				// existingLedger.balance += ledgerAmount;
+				// await existingLedger.save({ session });
+			} else {
+				const newLedger = new Ledger({
+					contact: agent,
+					createdBy: userId,
+					// oldBalance: 0,
+					// balance: ledgerAmount,
+				});
+				const savedLedger = await newLedger.save({ session }); // Save within the transaction
+				ledgerIds.push(savedLedger._id);
+			}
+		}
+
+		// Update the main ledger (ledgerId) oldBalance and balance
+		// const mainLedger = await Ledger.findById(ledgerId).session(session);
+		// if (mainLedger) {
+		// 	mainLedger.balance += ledgerAmount;
+		// 	await mainLedger.save({ session });
+		// }
 
 		const newSheet = new Sheet({
 			amount,
 			status,
 			createdBy: userId,
-			ledgerId,
+			ledgerIds: ledgerIds,
 			agent: agent || null,
 		});
 
-		await newSheet.save();
+		await newSheet.save({ session }); // Save within the transaction
+
+		await session.commitTransaction(); // Commit the transaction
+		session.endSession();
+
 		return res.status(201).json(newSheet);
 	} catch (error) {
+		await session.abortTransaction(); // Rollback the transaction on error
+		session.endSession();
+
 		console.error("Error creating sheet:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
 	}
@@ -29,19 +81,39 @@ export const createSheet = async (req: Request, res: Response) => {
 
 // Get all Sheets
 export const getAllSheets = async (req: Request, res: Response) => {
+	const userId = await getUserIdFromRequest(req);
+
 	try {
 		const ledgerId = req.query.ledger;
+		const status = req.query.status;
 		const { start, end } = getStartAndEndDate(req, res);
 
-		const sheets = await Sheet.find({
-			ledgerId,
+		const query: any = {
 			createdAt: { $gte: start, $lte: end },
-		})
+		};
+
+		if (ledgerId) {
+			query.ledgerIds = ledgerId;
+		} else {
+			query.createdBy = userId;
+		}
+
+		if (status) {
+			query.status = status;
+		}
+
+		const sheets = await Sheet.find(query)
 			.sort({
 				createdAt: -1,
 			})
-			.populate("createdBy", "firstName lastName phone")
-			.populate("agent", "firstName lastName phoneNumber");
+			.populate("createdBy", "firstName lastName phoneNumber")
+			.populate("agent", "firstName lastName phone")
+			.populate({
+				path: "ledgerIds",
+				populate: {
+					path: "contact",
+				},
+			});
 
 		return res.status(200).json(sheets);
 	} catch (error) {

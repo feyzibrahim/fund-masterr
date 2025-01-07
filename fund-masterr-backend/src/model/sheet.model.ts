@@ -6,7 +6,7 @@ export interface ISheet extends Document {
 	status: "pending" | "delivered" | "cancelled";
 	statusChangeLogs: { status: string; timestamp: Date }[];
 	createdBy: mongoose.Types.ObjectId; // Reference to User
-	ledgerId: mongoose.Types.ObjectId; // Reference to Ledger
+	ledgerId: mongoose.Types.ObjectId[]; // Reference to Ledger
 	agent: mongoose.Types.ObjectId; // Reference to User
 }
 
@@ -42,11 +42,13 @@ const SheetSchema: Schema = new Schema(
 			ref: "User",
 			required: true,
 		},
-		ledgerId: {
-			type: Schema.Types.ObjectId,
-			ref: "Ledger",
-			required: true,
-		},
+		ledgerIds: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "Ledger",
+				required: true,
+			},
+		],
 		agent: {
 			type: Schema.Types.ObjectId,
 			ref: "Contact",

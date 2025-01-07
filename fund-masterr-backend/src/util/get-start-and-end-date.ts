@@ -5,6 +5,7 @@ export const getStartAndEndDate = (
 	res: Response
 ): { start: Date; end: Date } => {
 	const queryDate = req.query.date ? new Date(req.query.date as string) : new Date();
+	console.log("🚀 ~ file: get-start-and-end-date.ts:8 ~ queryDate:", queryDate);
 
 	// Set start and end of the day for the specified date
 	const start = new Date(queryDate);

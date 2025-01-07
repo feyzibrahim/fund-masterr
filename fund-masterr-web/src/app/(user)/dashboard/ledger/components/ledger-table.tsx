@@ -32,9 +32,10 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 			<TableHeader>
 				<TableRow>
 					<TableHead>Name</TableHead>
-					<TableHead>Email</TableHead>
+					<TableHead>Phone</TableHead>
+					<TableHead>Type</TableHead>
 					<TableHead>Old Balance</TableHead>
-					<TableHead>Balance</TableHead>
+					<TableHead>Fund</TableHead>
 					<TableHead>Time</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
@@ -64,11 +65,14 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 								</Link>
 							</TableCell>
 							<TableCell>{ledger.contact.phone}</TableCell>
+							<TableCell className="capitalize">
+								{ledger.contact.type}
+							</TableCell>
 							<TableCell>
 								{ledger.oldBalance && formatCurrency(ledger.oldBalance)}
 							</TableCell>
 							<TableCell>
-								{ledger.balance && formatCurrency(ledger.balance)}{" "}
+								{ledger.fund && formatCurrency(ledger.fund)}{" "}
 							</TableCell>
 							<TableCell>
 								{ledger.createdAt && formatDate(ledger.createdAt)}

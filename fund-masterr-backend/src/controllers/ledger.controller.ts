@@ -8,7 +8,7 @@ export const createLedger = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	try {
-		const { contact, oldBalance, balance, sheetCount, lastSheet } = req.body;
+		const { contact, oldBalance, fund } = req.body;
 
 		// Parse and normalize date to only compare the day, ignoring time
 		const todayStart = new Date();
@@ -34,9 +34,7 @@ export const createLedger = async (req: Request, res: Response) => {
 			contact,
 			createdBy: userId,
 			oldBalance,
-			balance,
-			sheetCount,
-			lastSheet,
+			fund,
 		});
 
 		const savedLedger = await newLedger.save();

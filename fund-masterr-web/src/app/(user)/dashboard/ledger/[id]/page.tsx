@@ -15,7 +15,7 @@ export default async function UserSheetsPage({ params, searchParams }: Props) {
 	try {
 		const date = searchParams?.date;
 		sheets = await AxiosRequest.get<ISheet[]>(
-			`/sheet?ledger=${params.id}${date ? `,date=${date}` : ""}`
+			`/sheet?ledger=${params.id}${date ? `&date=${date}` : ""}`
 		);
 	} catch (error: any) {
 		errorMessage = error.message ?? "An error occurred while fetching sheets.";

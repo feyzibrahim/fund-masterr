@@ -24,19 +24,20 @@ export function DailySheets({ sheets, errorMessage }: DailySheetsProps) {
 					<TableHead>Amount</TableHead>
 					<TableHead>Time</TableHead>
 					<TableHead>Status</TableHead>
+					<TableHead>Payer</TableHead>
 					<TableHead>Assigned To</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{errorMessage ? (
 					<TableRow>
-						<TableCell colSpan={4} className="text-center text-red-500">
+						<TableCell colSpan={5} className="text-center text-red-500">
 							{errorMessage}
 						</TableCell>
 					</TableRow>
 				) : sheets.length === 0 ? (
 					<TableRow>
-						<TableCell colSpan={4} className="text-center py-20">
+						<TableCell colSpan={5} className="text-center py-20">
 							No sheets are added. Please add a new one.
 						</TableCell>
 					</TableRow>
@@ -46,6 +47,13 @@ export function DailySheets({ sheets, errorMessage }: DailySheetsProps) {
 							<TableCell>{formatCurrency(sheet.amount)}</TableCell>
 							<TableCell>{formatDate(sheet.createdAt)}</TableCell>
 							<TableCell className="capitalize">{sheet.status}</TableCell>
+							<TableCell className="p-0">
+								{
+									sheet.ledgerIds.find(
+										(ledger) => ledger.contact?.type === "payer"
+									)?.contact.firstName
+								}
+							</TableCell>
 							<TableCell className="p-0">
 								{sheet.agent ? (
 									`${sheet.agent.firstName} ${sheet.agent.lastName}`

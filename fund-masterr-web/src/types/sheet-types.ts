@@ -8,7 +8,7 @@ export interface ISheet {
 	status: "pending" | "delivered" | "cancelled";
 	statusChangeLogs?: { status: string; timestamp: Date }[];
 	createdBy: IUser;
-	ledgerId: ILedger;
+	ledgerIds: ILedger[];
 	agent?: IContact;
 	createdAt: string;
 	updatedAt: string;

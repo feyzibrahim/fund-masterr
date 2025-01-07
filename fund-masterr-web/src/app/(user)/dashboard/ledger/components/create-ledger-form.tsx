@@ -34,6 +34,7 @@ import { createNewLedger } from "./action";
 const ledgerSchema = z.object({
 	contact: z.string().min(1, "Select a contact"),
 	oldBalance: z.number().min(0, "Old balance must be a positive number"),
+	fund: z.number().min(0, "Old balance must be a positive number"),
 });
 
 export type LedgerFormValues = z.infer<typeof ledgerSchema>;
@@ -66,6 +67,7 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 		defaultValues: {
 			contact: "",
 			oldBalance: 0,
+			fund: 0,
 		},
 	});
 
@@ -89,7 +91,7 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 					render={({ field }) => (
 						<FormItem>
 							<div className="space-y-3">
-								<FormLabel>User</FormLabel>
+								<FormLabel>Contact</FormLabel>
 								<FormControl>
 									<Popover>
 										<PopoverTrigger asChild>
@@ -182,6 +184,27 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 								<Input
 									type="number"
 									placeholder="Enter old balance"
+									{...field}
+									value={field.value} // Keep the field value synced
+									onChange={
+										(e) => field.onChange(e.target.valueAsNumber || 0) // Convert to number
+									}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				{/* Fund Field */}
+				<FormField
+					name="fund"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Fund</FormLabel>
+							<FormControl>
+								<Input
+									type="number"
+									placeholder="Enter fund"
 									{...field}
 									value={field.value} // Keep the field value synced
 									onChange={

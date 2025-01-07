@@ -5,7 +5,7 @@ export interface ILedger extends Document {
 	contact: mongoose.Types.ObjectId[]; // References to User model
 	createdBy: mongoose.Types.ObjectId; // Reference to User model
 	oldBalance?: number;
-	balance?: number;
+	fund?: number;
 	// sheetCount?: number;
 	// lastSheet: string;
 }
@@ -28,7 +28,7 @@ const LedgerSchema: Schema = new Schema(
 			default: 0,
 			min: 0,
 		},
-		balance: {
+		fund: {
 			type: Number,
 			default: 0,
 			min: 0,
