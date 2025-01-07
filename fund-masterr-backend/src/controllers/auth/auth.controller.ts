@@ -219,4 +219,8 @@ const changePassword = async (req: Request, res: Response): Promise<void> => {
 	}
 };
 
-export { changePassword, editUser, getUserDataFirst, loginUser, signUpUser };
+const testApp = async (req: Request, res: Response) => {
+	res.status(200).json({ status: "App is perfectly working fine", success: true });
+};
+
+export { changePassword, editUser, getUserDataFirst, loginUser, signUpUser, testApp };

@@ -1,6 +1,6 @@
 import express from "express";
 // import upload from "../middleware/upload";
-import { loginUser, signUpUser } from "../controllers/auth/auth.controller";
+import { loginUser, signUpUser, testApp } from "../controllers/auth/auth.controller";
 import {
 	forgotPassword,
 	newPassword,
@@ -26,5 +26,7 @@ router.post("/set-new-password", newPassword);
 router.post("/send-otp", sendOTP);
 router.post("/validate-otp", validateOTP);
 // router.post("/resend-otp", resendOTP);
+
+router.post("/test-app", testApp);
 
 export default router;
