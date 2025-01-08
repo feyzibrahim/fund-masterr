@@ -6,18 +6,23 @@ export const getStartAndEndDate = (
 ): { start: Date; end: Date } => {
 	const queryDate = req.query.date ? new Date(req.query.date as string) : new Date();
 
-	// Helper function to adjust the date to IST
-	const adjustToIST = (date: Date) => {
-		const offset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
-		return new Date(date.getTime() + offset);
-	};
+	// Get the UTC time for the specified date
+	const utcDate = new Date(
+		Date.UTC(
+			queryDate.getUTCFullYear(),
+			queryDate.getUTCMonth(),
+			queryDate.getUTCDate()
+		)
+	);
 
-	// Set start and end of the day for the specified date
-	const start = adjustToIST(new Date(queryDate));
-	start.setUTCHours(0, 0, 0, 0); // Set to start of the day in IST
+	// Adjust for IST timezone (UTC+5:30)
+	const IST_OFFSET = 5.5 * 60 * 60 * 1000;
 
-	const end = adjustToIST(new Date(queryDate));
-	end.setUTCHours(23, 59, 59, 999); // Set to end of the day in IST
+	const start = new Date(utcDate.getTime() + IST_OFFSET);
+	start.setHours(0, 0, 0, 0); // Start of the day in IST
+
+	const end = new Date(utcDate.getTime() + IST_OFFSET);
+	end.setHours(23, 59, 59, 999); // End of the day in IST
 
 	return { start, end };
 };
