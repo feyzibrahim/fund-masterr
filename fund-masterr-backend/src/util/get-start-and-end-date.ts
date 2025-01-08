@@ -17,6 +17,8 @@ export const getStartAndEndDate = (
 
 	const end = new Date(convertedUTC.getTime() + IST_OFFSET);
 	end.setHours(23, 59, 59, 999);
+	console.log("🚀 ~ file: get-start-and-end-date.ts:23 ~ end:", end);
+	console.log("🚀 ~ file: get-start-and-end-date.ts:23 ~ start:", start);
 
 	return { start, end };
 };
