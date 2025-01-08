@@ -4,21 +4,14 @@ export const getStartAndEndDate = (
 	req: Request,
 	res: Response
 ): { start: Date; end: Date } => {
-	const queryDate = req.query.date
-		? new Date(req.query.date as string).toUTCString()
-		: new Date().toUTCString();
-
-	const convertedUTC = new Date(queryDate);
-	const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+	const queryDate = req.query.date ? new Date(req.query.date as string) : new Date();
 
 	// Set start and end of the day for the specified date
-	const start = new Date(convertedUTC.getTime() + IST_OFFSET);
+	const start = new Date(queryDate);
 	start.setHours(0, 0, 0, 0);
 
-	const end = new Date(convertedUTC.getTime() + IST_OFFSET);
+	const end = new Date(queryDate);
 	end.setHours(23, 59, 59, 999);
-	console.log("🚀 ~ file: get-start-and-end-date.ts:23 ~ end:", end);
-	console.log("🚀 ~ file: get-start-and-end-date.ts:23 ~ start:", start);
 
 	return { start, end };
 };
