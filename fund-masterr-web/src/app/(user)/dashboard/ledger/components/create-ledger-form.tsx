@@ -195,27 +195,6 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 						</FormItem>
 					)}
 				/>
-				{/* Fund Field */}
-				<FormField
-					name="fund"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Fund</FormLabel>
-							<FormControl>
-								<Input
-									type="number"
-									placeholder="Enter fund"
-									{...field}
-									value={field.value} // Keep the field value synced
-									onChange={
-										(e) => field.onChange(e.target.valueAsNumber || 0) // Convert to number
-									}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
 
 				{errorMessage && <p className="text-red-500">{errorMessage}</p>}
 

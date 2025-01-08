@@ -3,7 +3,7 @@ import { getAccessToken } from "./auth-utils";
 
 // Create an Axios instance
 const axiosInstance: AxiosInstance = axios.create({
-	baseURL: process.env.backend ?? "http://localhost:4000/api", // Replace with your base URL
+	baseURL: process.env.NEXT_PUBLIC_BACKEND ?? "http://localhost:4000/api", // Replace with your base URL
 	timeout: 5000, // Set a timeout limit
 	headers: {
 		"Content-Type": "application/json",
