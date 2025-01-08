@@ -71,7 +71,7 @@ export const getAllLedgers = async (req: Request, res: Response) => {
 export const getLedgerById = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		const ledger = await Ledger.findById(id).populate("users");
+		const ledger = await Ledger.findById(id).populate("contact");
 
 		if (!ledger) {
 			return res.status(404).json({ message: "Ledger not found" });

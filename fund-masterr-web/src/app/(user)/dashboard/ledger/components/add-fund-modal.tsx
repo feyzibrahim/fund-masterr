@@ -8,22 +8,25 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { IndianRupee } from "lucide-react";
 import { useState } from "react";
-import { CreateLedgerForm } from "./create-ledger-form";
+import { AddFundForm } from "./add-fund-form";
 
-export function CreateLedgerModal() {
+export function AddFundModal() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen} modal>
 			<DialogTrigger asChild>
-				<Button size="sm">Add Ledger</Button>
+				<Button size="icon" variant="ghost">
+					<IndianRupee className="w-4 h-4" />
+				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Add Ledgers</DialogTitle>
+					<DialogTitle>Add Fund</DialogTitle>
 				</DialogHeader>
-				<CreateLedgerForm setIsOpen={setIsOpen} />
+				<AddFundForm setIsOpen={setIsOpen} />
 			</DialogContent>
 		</Dialog>
 	);

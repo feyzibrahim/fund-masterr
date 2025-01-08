@@ -19,7 +19,7 @@ export function AddNewAgentModal() {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button>Add New Agents</Button>
+				<Button size="sm">Add New Agents</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>

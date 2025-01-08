@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
 	Table,
 	TableBody,
@@ -10,7 +11,7 @@ import { getSession } from "@/lib/auth-utils";
 import { getLedgerListUser } from "@/lib/get-ledger-list-user";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ILedger } from "@/types/ledger-types";
-import { TrashIcon } from "lucide-react";
+import { ChevronRight, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -36,7 +37,6 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 					<TableHead>Type</TableHead>
 					<TableHead>Old Balance</TableHead>
 					<TableHead>Fund</TableHead>
-					<TableHead>Time</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -74,11 +74,12 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 							<TableCell>
 								{ledger.fund && formatCurrency(ledger.fund)}{" "}
 							</TableCell>
-							<TableCell>
-								{ledger.createdAt && formatDate(ledger.createdAt)}
-							</TableCell>
-							<TableCell>
-								<TrashIcon className="w-4 h-4" />
+							<TableCell className="p-0">
+								<Link href={`/dashboard/ledger/${ledger._id}`}>
+									<Button size="icon" variant="outline">
+										<ChevronRight className="w-4 h-4" />
+									</Button>
+								</Link>
 							</TableCell>
 						</TableRow>
 					))

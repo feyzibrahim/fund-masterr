@@ -13,36 +13,6 @@ const createToken = (_id: string, role: string): string => {
 	return jwt.sign({ _id, role }, process.env.SECRET, { expiresIn: "1d" });
 };
 
-// Cookie configuration
-const cookieConfig = {
-	secure: true,
-	httpOnly: true,
-	maxAge: 1000 * 60 * 60 * 24,
-};
-
-// Get user data on initial page load
-const getUserDataFirst = async (req: Request, res: Response): Promise<void> => {
-	try {
-		const token = req.cookies.user_token;
-		if (!token) {
-			throw new Error("No token found");
-		}
-
-		const { _id } = jwt.verify(token, process.env.SECRET as string) as {
-			_id: string;
-		};
-
-		const user = await User.findOne({ _id }, { password: 0 });
-		if (!user) {
-			throw new Error("Cannot find user");
-		}
-
-		res.status(200).json(user);
-	} catch (error: any) {
-		res.status(400).json({ error: error.message });
-	}
-};
-
 // Sign up a user
 const signUpUser = async (req: Request, res: Response): Promise<void> => {
 	try {
@@ -223,4 +193,4 @@ const testApp = async (req: Request, res: Response) => {
 	res.status(200).json({ status: "App is perfectly working fine", success: true });
 };
 
-export { changePassword, editUser, getUserDataFirst, loginUser, signUpUser, testApp };
+export { changePassword, editUser, loginUser, signUpUser, testApp };

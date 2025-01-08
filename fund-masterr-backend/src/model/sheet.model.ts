@@ -6,7 +6,7 @@ export interface ISheet extends Document {
 	status: "pending" | "delivered" | "cancelled";
 	statusChangeLogs: { status: string; timestamp: Date }[];
 	createdBy: mongoose.Types.ObjectId; // Reference to User
-	ledgerId: mongoose.Types.ObjectId[]; // Reference to Ledger
+	ledgerIds: mongoose.Types.ObjectId[]; // Reference to Ledger
 	agent: mongoose.Types.ObjectId; // Reference to User
 }
 

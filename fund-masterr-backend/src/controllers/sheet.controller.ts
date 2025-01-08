@@ -86,15 +86,14 @@ export const getAllSheets = async (req: Request, res: Response) => {
 	try {
 		const ledgerId = req.query.ledger;
 		const status = req.query.status;
-		const { start, end } = getStartAndEndDate(req, res);
 
-		const query: any = {
-			createdAt: { $gte: start, $lte: end },
-		};
+		const query: any = {};
 
 		if (ledgerId) {
 			query.ledgerIds = ledgerId;
 		} else {
+			const { start, end } = getStartAndEndDate(req, res);
+			query.createdAt = { $gte: start, $lte: end };
 			query.createdBy = userId;
 		}
 

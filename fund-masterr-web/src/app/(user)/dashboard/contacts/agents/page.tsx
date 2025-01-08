@@ -5,7 +5,7 @@ export default async function AgentsPage() {
 	return (
 		<div>
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold mb-6">Agents</h1>
+				<h1 className="text-xl mb-6">Agents</h1>
 				<AddNewAgentModal />
 			</div>
 			<div className="rounded-md border">

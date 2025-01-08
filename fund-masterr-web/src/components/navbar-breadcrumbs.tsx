@@ -9,7 +9,7 @@ import {
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import Link from "next/link";
-import { TransactionDatePicker } from "./transaction-date-picker";
+import { URLDatePicker } from "./url-date-picker";
 
 export default function NavbarBreadCrumbs() {
 	const pathname = usePathname();
@@ -49,7 +49,7 @@ export default function NavbarBreadCrumbs() {
 					</BreadcrumbList>
 				</Breadcrumb>
 			</div>
-			<TransactionDatePicker />
+			<URLDatePicker />
 		</header>
 	);
 }

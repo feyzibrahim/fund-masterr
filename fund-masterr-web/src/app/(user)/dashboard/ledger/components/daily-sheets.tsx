@@ -14,9 +14,10 @@ import { UserPlus } from "lucide-react";
 type DailySheetsProps = {
 	sheets: ISheet[];
 	errorMessage: string;
+	hidePayer?: boolean;
 };
 
-export function DailySheets({ sheets, errorMessage }: DailySheetsProps) {
+export function DailySheets({ sheets, errorMessage, hidePayer }: DailySheetsProps) {
 	return (
 		<Table>
 			<TableHeader>
@@ -24,7 +25,7 @@ export function DailySheets({ sheets, errorMessage }: DailySheetsProps) {
 					<TableHead>Amount</TableHead>
 					<TableHead>Time</TableHead>
 					<TableHead>Status</TableHead>
-					<TableHead>Payer</TableHead>
+					{!hidePayer && <TableHead>Payer</TableHead>}
 					<TableHead>Assigned To</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -47,13 +48,20 @@ export function DailySheets({ sheets, errorMessage }: DailySheetsProps) {
 							<TableCell>{formatCurrency(sheet.amount)}</TableCell>
 							<TableCell>{formatDate(sheet.createdAt)}</TableCell>
 							<TableCell className="capitalize">{sheet.status}</TableCell>
-							<TableCell className="p-0">
-								{
-									sheet.ledgerIds.find(
-										(ledger) => ledger.contact?.type === "payer"
-									)?.contact.firstName
-								}
-							</TableCell>
+							{!hidePayer && (
+								<TableCell className="p-0">
+									{
+										sheet.ledgerIds.find(
+											(ledger) => ledger.contact?.type === "payer"
+										)?.contact.firstName
+									}{" "}
+									{
+										sheet.ledgerIds.find(
+											(ledger) => ledger.contact?.type === "payer"
+										)?.contact.lastName
+									}
+								</TableCell>
+							)}
 							<TableCell className="p-0">
 								{sheet.agent ? (
 									`${sheet.agent.firstName} ${sheet.agent.lastName}`

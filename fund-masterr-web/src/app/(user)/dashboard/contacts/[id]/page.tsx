@@ -17,7 +17,7 @@ export default async function ContactDetailsPage({ params }: { params: { id: str
 	}
 	return (
 		<div className="">
-			<h1 className="text-4xl font-bold mb-8 text-primary">Contact Details</h1>
+			<h1 className="text-xl mb-8 text-primary">Contact Details</h1>
 			<ContactDetails contact={contact} />
 		</div>
 	);

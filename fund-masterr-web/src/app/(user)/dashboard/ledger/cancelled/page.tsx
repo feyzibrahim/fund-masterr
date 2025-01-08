@@ -23,7 +23,7 @@ export default async function CancelledSheetsPage({ params, searchParams }: Prop
 	return (
 		<div>
 			<div className="flex items-center justify-between">
-				<h1 className="text-2xl font-bold mb-5">Cancelled Sheets</h1>
+				<h1 className="text-xl= mb-5">Cancelled Sheets</h1>
 				{/* <CreateSheetModal /> */}
 			</div>
 			<DailySheets sheets={sheets} errorMessage={errorMessage} />

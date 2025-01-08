@@ -14,7 +14,7 @@ import { CalendarIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation"; // import useSearchParams
 import { useState, useEffect, Suspense } from "react";
 
-function TransactionDatePickerReal() {
+function URLDatePickerReal() {
 	const router = useRouter();
 	const searchParams = useSearchParams(); // initialize useSearchParams
 	const [date, setDate] = useState<Date | undefined>(undefined);
@@ -74,10 +74,10 @@ function TransactionDatePickerReal() {
 	);
 }
 
-export function TransactionDatePicker() {
+export function URLDatePicker() {
 	return (
 		<Suspense fallback={<div>Something went wrong</div>}>
-			<TransactionDatePickerReal />
+			<URLDatePickerReal />
 		</Suspense>
 	);
 }

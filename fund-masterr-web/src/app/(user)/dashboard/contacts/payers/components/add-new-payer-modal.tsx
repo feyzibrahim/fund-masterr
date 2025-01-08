@@ -19,7 +19,7 @@ export function AddNewPayerModal() {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button>Add New Payer</Button>
+				<Button size="sm">Add New Payer</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>

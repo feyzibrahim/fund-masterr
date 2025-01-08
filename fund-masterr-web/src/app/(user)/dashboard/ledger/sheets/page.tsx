@@ -21,7 +21,7 @@ export default async function SheetsPage({ params, searchParams }: Props) {
 	return (
 		<div>
 			<div className="flex items-center justify-between">
-				<h1 className="text-2xl font-bold mb-5">Sheets</h1>
+				<h1 className="text-xl mb-5">Sheets</h1>
 				{/* <CreateSheetModal /> */}
 			</div>
 			<DailySheets sheets={sheets} errorMessage={errorMessage} />

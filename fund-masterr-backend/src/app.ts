@@ -1,13 +1,15 @@
 require("dotenv").config();
-import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import express from "express";
 import mongoose from "mongoose";
-import authRoutes from "./routes/auth";
-import contactRoutes from "./routes/contact";
-import ledgerRoutes from "./routes/ledger";
-import sheetRoutes from "./routes/sheet";
 import { requireAuth } from "./middleware/requireAuth";
+import authRouter from "./routes/auth.router";
+import contactRouter from "./routes/contact.router";
+import fundRouter from "./routes/fund.router";
+import ledgerRouter from "./routes/ledger.router";
+import sheetRouter from "./routes/sheet.router";
+import userRouter from "./routes/user.router";
 
 const app = express();
 
@@ -30,14 +32,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Auth middleware
-
-// import { requireAuth, requireAdminAuth } from "./middleware/requireAuth";
-
-app.use("/api/auth", authRoutes);
-app.use("/api/contact", requireAuth, contactRoutes);
-app.use("/api/ledger", requireAuth, ledgerRoutes);
-app.use("/api/sheet", requireAuth, sheetRoutes);
+app.use("/api/auth", authRouter);
+app.use("/api/contact", requireAuth, contactRouter);
+app.use("/api/ledger", requireAuth, ledgerRouter);
+app.use("/api/sheet", requireAuth, sheetRouter);
+app.use("/api/user", requireAuth, userRouter);
+app.use("/api/fund", requireAuth, fundRouter);
 
 // Public Api for accessing images
 app.use("/api/img", express.static(__dirname + "/public/"));
