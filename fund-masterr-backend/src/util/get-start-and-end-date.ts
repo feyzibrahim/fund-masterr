@@ -4,25 +4,19 @@ export const getStartAndEndDate = (
 	req: Request,
 	res: Response
 ): { start: Date; end: Date } => {
-	const queryDate = req.query.date ? new Date(req.query.date as string) : new Date();
+	const queryDate = req.query.date
+		? new Date(req.query.date as string).toUTCString()
+		: new Date().toUTCString();
 
-	// Get the UTC time for the specified date
-	const utcDate = new Date(
-		Date.UTC(
-			queryDate.getUTCFullYear(),
-			queryDate.getUTCMonth(),
-			queryDate.getUTCDate()
-		)
-	);
-
-	// Adjust for IST timezone (UTC+5:30)
+	const convertedUTC = new Date(queryDate);
 	const IST_OFFSET = 5.5 * 60 * 60 * 1000;
 
-	const start = new Date(utcDate.getTime() + IST_OFFSET);
-	start.setHours(0, 0, 0, 0); // Start of the day in IST
+	// Set start and end of the day for the specified date
+	const start = new Date(convertedUTC.getTime() + IST_OFFSET);
+	start.setHours(0, 0, 0, 0);
 
-	const end = new Date(utcDate.getTime() + IST_OFFSET);
-	end.setHours(23, 59, 59, 999); // End of the day in IST
+	const end = new Date(convertedUTC.getTime() + IST_OFFSET);
+	end.setHours(23, 59, 59, 999);
 
 	return { start, end };
 };
