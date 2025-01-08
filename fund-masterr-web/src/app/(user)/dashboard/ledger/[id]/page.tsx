@@ -1,28 +1,23 @@
 import { DailySheets } from "@/app/(user)/dashboard/ledger/components/daily-sheets";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserDetails } from "@/components/user-details";
-import { AxiosRequest } from "@/lib/axios.instance";
-import { ISheet } from "@/types/sheet-types";
 import { AddFundModal } from "../components/add-fund-modal";
 import { CreateSheetModal } from "../components/create-sheet-modal";
+import { getFunds, getLedger, getSheets } from "./action";
+import { FundsTable } from "../components/funds-table";
 
 interface Props {
 	params: { id: string };
 }
 
 export default async function UserSheetsPage({ params }: Props) {
-	let sheets: ISheet[] = [];
-	let errorMessage = "";
-
-	try {
-		sheets = await AxiosRequest.get<ISheet[]>(`/sheet?ledger=${params.id}`);
-	} catch (error: any) {
-		errorMessage = error.message ?? "An error occurred while fetching sheets.";
-	}
+	let { sheets, error: sheetsError } = await getSheets(params.id);
+	let { funds, error: fundsError } = await getFunds(params.id);
+	let { ledger } = await getLedger(params.id);
 
 	return (
 		<div className="space-y-5">
-			<UserDetails ledgerId={params.id} sheets={sheets} />
+			<UserDetails sheets={sheets} funds={funds} ledger={ledger} />
 			<Tabs defaultValue="sheets" className="w-">
 				<div className="flex items-center justify-between">
 					<TabsList className="flex w-fit">
@@ -35,10 +30,10 @@ export default async function UserSheetsPage({ params }: Props) {
 					</div>
 				</div>
 				<TabsContent value="sheets">
-					<DailySheets sheets={sheets} errorMessage={errorMessage} hidePayer />
+					<DailySheets sheets={sheets} errorMessage={sheetsError} hidePayer />
 				</TabsContent>
 				<TabsContent value="fund-history">
-					<div>test</div>
+					<FundsTable funds={funds} errorMessage={fundsError} />
 				</TabsContent>
 			</Tabs>
 		</div>

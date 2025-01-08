@@ -7,14 +7,14 @@ export const createFund = async (req: Request, res: Response): Promise<Response>
 	const userId = await getUserIdFromRequest(req);
 
 	try {
-		const { amount, ledgerIds } = req.body;
+		const { amount, ledgerId } = req.body;
 
 		// Validate required fields
-		if (!amount || !ledgerIds) {
+		if (!amount || !ledgerId) {
 			return res.status(400).json({ message: "Missing required fields." });
 		}
 
-		const newFund = await Fund.create({ amount, addedBy: userId, ledgerIds });
+		const newFund = await Fund.create({ amount, addedBy: userId, ledgerId });
 		return res.status(201).json(newFund);
 	} catch (error) {
 		return res.status(500).json({ message: "Server error", error });
@@ -22,9 +22,17 @@ export const createFund = async (req: Request, res: Response): Promise<Response>
 };
 
 // Get all funds
-export const getFunds = async (_req: Request, res: Response): Promise<Response> => {
+export const getFunds = async (req: Request, res: Response): Promise<Response> => {
 	try {
-		const funds = await Fund.find().populate("addedBy").populate("ledgerIds");
+		const ledgerId = req.query.ledgerId;
+
+		const query: any = {};
+
+		if (ledgerId) {
+			query.ledgerId = ledgerId;
+		}
+
+		const funds = await Fund.find(query).populate("addedBy").populate("ledgerId");
 		return res.status(200).json(funds);
 	} catch (error) {
 		return res.status(500).json({ message: "Server error", error });
@@ -35,7 +43,7 @@ export const getFunds = async (_req: Request, res: Response): Promise<Response> 
 export const getFundById = async (req: Request, res: Response): Promise<Response> => {
 	try {
 		const { id } = req.params;
-		const fund = await Fund.findById(id).populate("addedBy").populate("ledgerIds");
+		const fund = await Fund.findById(id).populate("addedBy").populate("ledgerId");
 		if (!fund) {
 			return res.status(404).json({ message: "Fund not found." });
 		}
@@ -49,15 +57,15 @@ export const getFundById = async (req: Request, res: Response): Promise<Response
 export const updateFund = async (req: Request, res: Response): Promise<Response> => {
 	try {
 		const { id } = req.params;
-		const { amount, ledgerIds } = req.body;
+		const { amount, ledgerId } = req.body;
 
 		const updatedFund = await Fund.findByIdAndUpdate(
 			id,
-			{ amount, ledgerIds },
+			{ amount, ledgerId },
 			{ new: true, runValidators: true }
 		)
 			.populate("addedBy")
-			.populate("ledgerIds");
+			.populate("ledgerId");
 
 		if (!updatedFund) {
 			return res.status(404).json({ message: "Fund not found." });

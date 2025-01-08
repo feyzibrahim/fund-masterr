@@ -19,7 +19,7 @@ import { createNewFund } from "./action";
 
 // Define the Zod schema for validation
 const ledgerSchema = z.object({
-	fund: z.number().min(0, "Amount is required"),
+	amount: z.number().min(0, "Amount is required"),
 	ledgerId: z.string(),
 });
 
@@ -38,7 +38,7 @@ export function AddFundForm({ setIsOpen }: Props) {
 	const form = useForm<FundFormValues>({
 		resolver: zodResolver(ledgerSchema),
 		defaultValues: {
-			fund: 0,
+			amount: 0,
 			ledgerId: ledgerId,
 		},
 	});
@@ -58,14 +58,14 @@ export function AddFundForm({ setIsOpen }: Props) {
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 				{/* Amount Field */}
 				<FormField
-					name="fund"
+					name="amount"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Amount</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
-									placeholder="Enter fund"
+									placeholder="Enter amount"
 									{...field}
 									value={field.value} // Keep the field value synced
 									onChange={

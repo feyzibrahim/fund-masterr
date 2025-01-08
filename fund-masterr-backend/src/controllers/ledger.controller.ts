@@ -8,19 +8,14 @@ export const createLedger = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	try {
-		const { contact, oldBalance, fund } = req.body;
+		const { contact, oldBalance } = req.body;
 
-		// Parse and normalize date to only compare the day, ignoring time
-		const todayStart = new Date();
-		todayStart.setHours(0, 0, 0, 0);
-
-		const todayEnd = new Date();
-		todayEnd.setHours(23, 59, 59, 999);
+		const { start, end } = getStartAndEndDate(req, res);
 
 		// Check if a ledger already exists for the contact on the given date
 		const existingLedger = await Ledger.findOne({
 			contact,
-			createdAt: { $gte: todayStart, $lte: todayEnd },
+			createdAt: { $gte: start, $lte: end },
 		});
 
 		if (existingLedger) {
@@ -34,7 +29,6 @@ export const createLedger = async (req: Request, res: Response) => {
 			contact,
 			createdBy: userId,
 			oldBalance,
-			fund,
 		});
 
 		const savedLedger = await newLedger.save();
@@ -87,13 +81,13 @@ export const getLedgerById = async (req: Request, res: Response) => {
 export const updateLedger = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		const { date, users, oldBalance, balance, sheetCount, lastSheet } = req.body;
+		const { contact, oldBalance } = req.body;
 
 		const updatedLedger = await Ledger.findByIdAndUpdate(
 			id,
-			{ date, users, oldBalance, balance, sheetCount, lastSheet },
+			{ contact, oldBalance },
 			{ new: true } // Return the updated document
-		).populate("users");
+		).populate("contact");
 
 		if (!updatedLedger) {
 			return res.status(404).json({ message: "Ledger not found" });

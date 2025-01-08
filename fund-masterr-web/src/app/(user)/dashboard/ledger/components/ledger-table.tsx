@@ -36,7 +36,6 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 					<TableHead>Phone</TableHead>
 					<TableHead>Type</TableHead>
 					<TableHead>Old Balance</TableHead>
-					<TableHead>Fund</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -70,9 +69,6 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 							</TableCell>
 							<TableCell>
 								{ledger.oldBalance && formatCurrency(ledger.oldBalance)}
-							</TableCell>
-							<TableCell>
-								{ledger.fund && formatCurrency(ledger.fund)}{" "}
 							</TableCell>
 							<TableCell className="p-0">
 								<Link href={`/dashboard/ledger/${ledger._id}`}>
