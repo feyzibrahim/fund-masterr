@@ -4,6 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ILedger extends Document {
 	contact: mongoose.Types.ObjectId[]; // References to User model
 	createdBy: mongoose.Types.ObjectId; // Reference to User model
+	activeToday: boolean;
 	oldBalance?: number;
 }
 
@@ -24,6 +25,10 @@ const LedgerSchema: Schema = new Schema(
 			type: Number,
 			default: 0,
 			min: 0,
+		},
+		activeToday: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{

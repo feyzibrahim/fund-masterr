@@ -40,16 +40,27 @@ export const createLedger = async (req: Request, res: Response) => {
 
 export const getAllLedgers = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
+	const activeToday = req.query.activeToday;
 
 	try {
+		const query: any = {};
+
 		// Check if a date is passed in the query
 		const { start, end } = getStartAndEndDate(req, res);
 
-		// Fetch ledgers based on the date range
-		const ledgers = await Ledger.find({
-			createdBy: userId,
-			createdAt: { $gte: start, $lte: end },
-		})
+		if (start && end) {
+			query.createdAt = { $gte: start, $lte: end };
+		}
+
+		if (userId) {
+			query.createdBy = userId;
+		}
+
+		if (!activeToday) {
+			query.activeToday = true;
+		}
+
+		const ledgers = await Ledger.find(query)
 			.sort({
 				createdAt: -1,
 			})
