@@ -11,33 +11,59 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation"; // import useSearchParams
+import { usePathname, useRouter, useSearchParams } from "next/navigation"; // import useSearchParams
 import { useState, useEffect, Suspense } from "react";
 
 function URLDatePickerReal() {
 	const router = useRouter();
+	const pathname = usePathname();
+	const isLedgerDetailPage =
+		pathname.split("/").length > 3 &&
+		pathname.split("/")[2] === "ledger" &&
+		pathname.split("/")[3] !== "sheets" &&
+		pathname.split("/")[3] !== "cancelled";
+
 	const searchParams = useSearchParams(); // initialize useSearchParams
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [date, setDate] = useState<Date | undefined>(() => {
+		// Initialize the date state with today's date
+		const today = new Date();
+		return today;
+	});
 	const [open, setOpen] = useState(false); // for controlling popover open state
 
 	// Set the initial date from the query parameter when the component mounts
 	useEffect(() => {
-		const dateParam = searchParams.get("date");
-		if (dateParam) {
-			const urlDate = new Date(dateParam);
-			if (!isNaN(urlDate.getTime())) {
-				setDate(urlDate);
+		if (!isLedgerDetailPage) {
+			const dateParam = searchParams.get("date");
+			if (dateParam) {
+				const urlDate = new Date(dateParam);
+				if (!isNaN(urlDate.getTime())) {
+					setDate(urlDate);
+				}
+			} else {
+				setDate(new Date());
 			}
 		}
-	}, [searchParams]);
+	}, [searchParams, isLedgerDetailPage]);
 
 	const handleDateSelect = (selectedDate: Date | undefined) => {
 		if (selectedDate) {
 			setDate(selectedDate);
 
 			const formattedDate = format(selectedDate, "yyyy-MM-dd");
+			const today = format(new Date(), "yyyy-MM-dd"); // Format today's date for comparison
+			const currentUrl = new URL(window.location.href);
+			const searchParams = new URLSearchParams(currentUrl.search);
 
-			router.push(`?date=${formattedDate}`);
+			if (formattedDate === today || isLedgerDetailPage) {
+				searchParams.delete("date"); // Remove the 'date' parameter if it's today
+			} else {
+				searchParams.set("date", formattedDate); // Add/update the 'date' parameter
+			}
+
+			const newUrl = `${currentUrl.pathname}?${searchParams.toString()}`;
+			router.replace(newUrl); // Update the URL without adding to history
+
 			// Close the popover after selecting a date
 			setOpen(false);
 		}

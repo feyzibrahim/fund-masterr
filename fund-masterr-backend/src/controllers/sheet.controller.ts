@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Sheet from "../model/sheet.model";
-import { getUserIdFromRequest } from "../util/get-user-from-request";
-import { getStartAndEndDate } from "../util/get-start-and-end-date";
 import Ledger from "../model/ledger.model";
+import Sheet from "../model/sheet.model";
+import { getStartAndEndDate } from "../util/get-start-and-end-date";
+import { getUserIdFromRequest } from "../util/get-user-from-request";
 
 // Create a new Sheet with a transaction and update ledger balances
 export const createSheet = async (req: Request, res: Response) => {
@@ -16,6 +16,12 @@ export const createSheet = async (req: Request, res: Response) => {
 		const { amount, status, ledgerId, agent } = req.body;
 
 		let ledgerIds = [ledgerId];
+
+		await Ledger.updateOne(
+			{ _id: ledgerId },
+			{ $set: { activeToday: true } },
+			{ session } // Ensure this update is part of the transaction
+		);
 
 		// If agent is provided, check for an existing ledger or create one
 		if (agent) {
@@ -33,28 +39,18 @@ export const createSheet = async (req: Request, res: Response) => {
 
 			if (existingLedger) {
 				ledgerIds.push(existingLedger._id);
-
-				// Update the ledger's oldBalance and balance
-				// existingLedger.balance += ledgerAmount;
-				// await existingLedger.save({ session });
+				existingLedger.activeToday = true;
+				await existingLedger.save({ session });
 			} else {
 				const newLedger = new Ledger({
 					contact: agent,
 					createdBy: userId,
-					// oldBalance: 0,
-					// balance: ledgerAmount,
+					activeToday: true,
 				});
 				const savedLedger = await newLedger.save({ session }); // Save within the transaction
 				ledgerIds.push(savedLedger._id);
 			}
 		}
-
-		// Update the main ledger (ledgerId) oldBalance and balance
-		// const mainLedger = await Ledger.findById(ledgerId).session(session);
-		// if (mainLedger) {
-		// 	mainLedger.balance += ledgerAmount;
-		// 	await mainLedger.save({ session });
-		// }
 
 		const newSheet = new Sheet({
 			amount,

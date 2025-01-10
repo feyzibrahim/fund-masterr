@@ -1,6 +1,6 @@
-import { DailySheets } from "@/app/(user)/dashboard/ledger/components/daily-sheets";
+import { DailySheets } from "../components/daily-sheets";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserDetails } from "@/components/user-details";
+import { UserDetails } from "../components/user-details";
 import { AddFundModal } from "../components/add-fund-modal";
 import { CreateSheetModal } from "../components/create-sheet-modal";
 import { getFunds, getLedger, getSheets } from "./action";
@@ -30,7 +30,11 @@ export default async function UserSheetsPage({ params }: Props) {
 					</div>
 				</div>
 				<TabsContent value="sheets">
-					<DailySheets sheets={sheets} errorMessage={sheetsError} hidePayer />
+					<DailySheets
+						sheets={sheets}
+						errorMessage={sheetsError}
+						ledger={ledger}
+					/>
 				</TabsContent>
 				<TabsContent value="fund-history">
 					<FundsTable funds={funds} errorMessage={fundsError} />

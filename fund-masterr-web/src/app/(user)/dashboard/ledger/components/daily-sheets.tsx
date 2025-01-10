@@ -8,16 +8,25 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { ILedger } from "@/types/ledger-types";
 import { ISheet } from "@/types/sheet-types";
 import { UserPlus } from "lucide-react";
 
 type DailySheetsProps = {
 	sheets?: ISheet[];
+	ledger?: ILedger;
 	errorMessage?: string;
-	hidePayer?: boolean;
+	showPayer?: boolean;
+	showAgent?: boolean;
 };
 
-export function DailySheets({ sheets, errorMessage, hidePayer }: DailySheetsProps) {
+export function DailySheets({
+	sheets,
+	ledger,
+	errorMessage,
+	showPayer,
+	showAgent,
+}: DailySheetsProps) {
 	return (
 		<Table>
 			<TableHeader>
@@ -25,8 +34,12 @@ export function DailySheets({ sheets, errorMessage, hidePayer }: DailySheetsProp
 					<TableHead>Amount</TableHead>
 					<TableHead>Time</TableHead>
 					<TableHead>Status</TableHead>
-					{!hidePayer && <TableHead>Payer</TableHead>}
-					<TableHead>Assigned To</TableHead>
+					{(showPayer || (ledger && ledger.contact.type === "agent")) && (
+						<TableHead>Payer</TableHead>
+					)}
+					{(showAgent || (ledger && ledger.contact.type === "payer")) && (
+						<TableHead>Assigned To</TableHead>
+					)}
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -49,29 +62,50 @@ export function DailySheets({ sheets, errorMessage, hidePayer }: DailySheetsProp
 							<TableCell>{formatCurrency(sheet.amount)}</TableCell>
 							<TableCell>{formatDate(sheet.createdAt)}</TableCell>
 							<TableCell className="capitalize">{sheet.status}</TableCell>
-							{!hidePayer && (
+							{(showPayer ||
+								(ledger && ledger.contact.type === "agent")) && (
 								<TableCell className="p-0">
-									{
-										sheet.ledgerIds.find(
-											(ledger) => ledger.contact?.type === "payer"
-										)?.contact.firstName
-									}{" "}
-									{
-										sheet.ledgerIds.find(
-											(ledger) => ledger.contact?.type === "payer"
-										)?.contact.lastName
-									}
+									{sheet.ledgerIds.find(
+										(ledger) => ledger.contact?.type === "payer"
+									) ? (
+										`${
+											sheet.ledgerIds.find(
+												(ledger) =>
+													ledger.contact?.type === "payer"
+											)?.contact.firstName
+										} ${
+											sheet.ledgerIds.find(
+												(ledger) =>
+													ledger.contact?.type === "payer"
+											)?.contact.lastName
+										}`
+									) : (
+										<Button
+											variant="outline"
+											className="flex items-center gap-2"
+										>
+											<UserPlus className="w-4 h-4" />
+											Add Payer
+										</Button>
+									)}
 								</TableCell>
 							)}
-							<TableCell className="p-0">
-								{sheet.agent ? (
-									`${sheet.agent.firstName} ${sheet.agent.lastName}`
-								) : (
-									<Button size="icon" variant="outline">
-										<UserPlus className="w-4 h-4" />
-									</Button>
-								)}
-							</TableCell>
+							{(showAgent ||
+								(ledger && ledger.contact.type === "payer")) && (
+								<TableCell className="p-0">
+									{sheet.agent ? (
+										`${sheet.agent.firstName} ${sheet.agent.lastName}`
+									) : (
+										<Button
+											variant="outline"
+											className="flex items-center gap-2"
+										>
+											<UserPlus className="w-4 h-4" />
+											Add Agent
+										</Button>
+									)}
+								</TableCell>
+							)}
 						</TableRow>
 					))
 				)}

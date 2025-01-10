@@ -24,7 +24,12 @@ export default async function SheetsPage({ params, searchParams }: Props) {
 				<h1 className="text-xl mb-5">Sheets</h1>
 				{/* <CreateSheetModal /> */}
 			</div>
-			<DailySheets sheets={sheets} errorMessage={errorMessage} />
+			<DailySheets
+				sheets={sheets}
+				errorMessage={errorMessage}
+				showAgent
+				showPayer
+			/>
 		</div>
 	);
 }
