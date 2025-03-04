@@ -18,21 +18,17 @@ const signUpUser = async (req: Request, res: Response): Promise<void> => {
 	try {
 		let userCredentials = req.body;
 
-		const { email, password, confirmPassword } = req.body;
+		const { email, phoneNumber, password, confirmPassword } = req.body;
 
-		if (!email || !password || !confirmPassword) {
+		if (!password || !confirmPassword) {
 			throw new Error("All fields are required");
 		}
-
-		// if (firstName.trim() === "" || lastName.trim() === "") {
-		// 	throw new Error("First and last name cannot be empty");
-		// }
 
 		if (password !== confirmPassword) {
 			throw new Error("Passwords do not match");
 		}
 
-		if (!validator.isEmail(email)) {
+		if (email && !validator.isEmail(email)) {
 			throw new Error("Invalid email address");
 		}
 
@@ -40,9 +36,16 @@ const signUpUser = async (req: Request, res: Response): Promise<void> => {
 			throw new Error("Password is not strong enough");
 		}
 
-		const existingUser = await User.findOne({ email });
+		let existingUser = null;
+
+		if (email && validator.isEmail(email)) {
+			existingUser = await User.findOne({ email: email });
+		} else if (validator.isMobilePhone(phoneNumber)) {
+			existingUser = await User.findOne({ phoneNumber: phoneNumber });
+		}
+
 		if (existingUser) {
-			throw new Error("Email already in use");
+			throw new Error("Email or phone number already in use, please login");
 		}
 
 		const salt = await bcrypt.genSalt(10);
@@ -69,20 +72,23 @@ const signUpUser = async (req: Request, res: Response): Promise<void> => {
 
 // Log in a user
 const loginUser = async (req: Request, res: Response): Promise<void> => {
-	const { email, password } = req.body;
+	const { emailOrPhone, password } = req.body;
 
 	try {
-		if (!email || !password) {
+		if (!emailOrPhone || !password) {
 			throw new Error("All fields are required");
 		}
 
-		if (!validator.isEmail(email)) {
-			throw new Error("Invalid email address");
+		let user = null;
+
+		if (validator.isEmail(emailOrPhone)) {
+			user = await User.findOne({ email: emailOrPhone });
+		} else if (validator.isMobilePhone(emailOrPhone)) {
+			user = await User.findOne({ phoneNumber: emailOrPhone });
 		}
 
-		const user = await User.findOne({ email });
 		if (!user) {
-			throw new Error("Email not registered");
+			throw new Error("Email or phone number not registered");
 		}
 
 		if (!user.isActive) {

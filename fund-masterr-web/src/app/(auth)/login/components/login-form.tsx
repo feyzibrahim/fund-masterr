@@ -15,10 +15,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { login } from "../login";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 // Define schema using Zod
 export const LoginSchema = z.object({
-	email: z.string().email("Invalid email address"),
+	emailOrPhone: z.string(),
 	password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -27,11 +28,12 @@ export type LoginFormValues = z.infer<typeof LoginSchema>;
 export default function LoginForm() {
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 
 	const form = useForm<LoginFormValues>({
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
-			email: "",
+			emailOrPhone: "",
 			password: "",
 		},
 	});
@@ -54,12 +56,15 @@ export default function LoginForm() {
 				{/* Email Field */}
 				<FormField
 					control={form.control}
-					name="email"
+					name="emailOrPhone"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Email</FormLabel>
+							<FormLabel>Email or Phone Number</FormLabel>
 							<FormControl>
-								<Input placeholder="Enter your email" {...field} />
+								<Input
+									placeholder="Enter your email or phone number"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -74,11 +79,24 @@ export default function LoginForm() {
 						<FormItem>
 							<FormLabel>Password</FormLabel>
 							<FormControl>
-								<Input
-									type="password"
-									placeholder="Enter your password"
-									{...field}
-								/>
+								<div className="relative">
+									<Input
+										type={showPassword ? "text" : "password"}
+										placeholder="Enter your password"
+										{...field}
+									/>
+									<button
+										type="button"
+										className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+										onClick={() => setShowPassword(!showPassword)}
+									>
+										{showPassword ? (
+											<AiOutlineEyeInvisible />
+										) : (
+											<AiOutlineEye />
+										)}
+									</button>
+								</div>
 							</FormControl>
 							<FormMessage />
 						</FormItem>

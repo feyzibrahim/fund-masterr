@@ -3,18 +3,24 @@
 import { cookies } from "next/headers";
 import { AxiosRequest } from "@/lib/axios.instance";
 import { SignupFormValues } from "./components/signup-form";
+import { IAuthResponseTypes, ISignUpBodyTypes } from "@/types/auth-types";
 
 export async function signup(formData: SignupFormValues) {
-	const { email, password, confirmPassword } = formData;
+	const { email, password, confirmPassword, phoneNumber } = formData;
 
 	try {
-		const response = await AxiosRequest.post("/auth/signup", {
+		const { accessToken, refreshToken } = await AxiosRequest.post<
+			ISignUpBodyTypes,
+			IAuthResponseTypes
+		>("/auth/signup", {
 			email,
+			phoneNumber,
 			password,
 			confirmPassword,
 		});
 
-		// cookies().set("auth", "authenticated", { secure: true, httpOnly: true });
+		cookies().set("accessToken", accessToken, { httpOnly: true });
+		cookies().set("refreshToken", refreshToken, { httpOnly: true });
 		return { success: true };
 	} catch (error: any) {
 		return { success: false, error: error?.message ?? "Invalid email or password" };

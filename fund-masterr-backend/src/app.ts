@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import morgan from "morgan";
 import { requireAuth } from "./middleware/requireAuth";
 import authRouter from "./routes/auth.router";
 import contactRouter from "./routes/contact.router";
@@ -14,6 +15,7 @@ import userRouter from "./routes/user.router";
 const app = express();
 
 // Mounting necessary middlewares.
+app.use(morgan("dev")); // Add morgan middleware
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
