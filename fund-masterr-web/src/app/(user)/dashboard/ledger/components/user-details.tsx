@@ -14,19 +14,23 @@ type UserDetailsProps = {
 export function UserDetails({ sheets, funds, ledger }: UserDetailsProps) {
 	const calcGrandTotal = () => {
 		let grandTotal = 0;
+		if (ledger && ledger.oldBalance) {
+			grandTotal += ledger.oldBalance;
+		}
+
 		if (sheets) {
 			sheets.forEach((sheet) => {
-				grandTotal += sheet.amount;
+				if (sheet.status !== "cancelled") {
+					grandTotal += sheet.amount;
+				}
 			});
 		}
 		if (funds) {
 			funds.forEach((fund) => {
-				grandTotal += fund.amount;
+				grandTotal -= fund.amount;
 			});
 		}
-		if (ledger && ledger.oldBalance) {
-			grandTotal += ledger.oldBalance;
-		}
+
 		return grandTotal;
 	};
 
@@ -98,9 +102,7 @@ export function UserDetails({ sheets, funds, ledger }: UserDetailsProps) {
 						<p className="text-xl font-bold">
 							{sheets &&
 								formatCurrency(
-									sheets
-										.filter((sheet) => sheet.status !== "cancelled")
-										.reduce((acc, sheet) => acc + sheet.amount, 0)
+									sheets.reduce((acc, sheet) => acc + sheet.amount, 0)
 								)}
 						</p>
 					</div>

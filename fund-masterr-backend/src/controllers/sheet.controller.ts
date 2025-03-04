@@ -4,6 +4,8 @@ import Ledger from "../model/ledger.model";
 import Sheet from "../model/sheet.model";
 import { getStartAndEndDate } from "../util/get-start-and-end-date";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
+import User from "../model/user.model";
+import Contact from "../model/contact.model";
 
 // Create a new Sheet with a transaction and update ledger balances
 export const createSheet = async (req: Request, res: Response) => {
@@ -80,37 +82,66 @@ export const getAllSheets = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	try {
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
 		const ledgerId = req.query.ledger;
 		const status = req.query.status;
 
 		const query: any = {};
 
-		if (ledgerId) {
-			query.ledgerIds = ledgerId;
-		} else {
-			const { start, end } = getStartAndEndDate(req, res);
-			query.createdAt = { $gte: start, $lte: end };
-			query.createdBy = userId;
-		}
-
 		if (status) {
 			query.status = status;
 		}
 
-		const sheets = await Sheet.find(query)
-			.sort({
-				createdAt: -1,
-			})
-			.populate("createdBy", "firstName lastName phoneNumber")
-			.populate("agent", "firstName lastName phone")
-			.populate({
-				path: "ledgerIds",
-				populate: {
-					path: "contact",
-				},
-			});
+		if (user.role === "payer") {
+			if (ledgerId) {
+				query.ledgerIds = ledgerId;
+			} else {
+				const { start, end } = getStartAndEndDate(req, res);
+				query.createdAt = { $gte: start, $lte: end };
+				query.createdBy = userId;
+			}
 
-		return res.status(200).json(sheets);
+			const sheets = await Sheet.find(query)
+				.sort({
+					createdAt: -1,
+				})
+				.populate("createdBy", "firstName lastName phoneNumber")
+				.populate("agent", "firstName lastName phone")
+				.populate({
+					path: "ledgerIds",
+					populate: {
+						path: "contact",
+					},
+				});
+
+			return res.status(200).json(sheets);
+		} else {
+			const contact = await Contact.findOne({ phone: user.phoneNumber });
+
+			if (!contact) {
+				return res
+					.status(404)
+					.json({ success: false, message: "Contact not found" });
+			}
+
+			query.agent = contact._id;
+			const { start, end } = getStartAndEndDate(req, res);
+			query.createdAt = { $gte: start, $lte: end };
+
+			const sheets = await Sheet.find(query)
+				.sort({
+					createdAt: -1,
+				})
+				.populate("createdBy", "firstName lastName phoneNumber")
+				.populate("agent", "firstName lastName phone");
+
+			return res.status(200).json(sheets);
+		}
 	} catch (error) {
 		console.error("Error fetching sheets:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
@@ -155,6 +186,32 @@ export const updateSheet = async (req: Request, res: Response) => {
 		const updatedSheet = await Sheet.findByIdAndUpdate(
 			id,
 			{ amount, status, assignedTo },
+			{ new: true, runValidators: true }
+		);
+
+		if (!updatedSheet) {
+			return res.status(404).json({ success: false, message: "Sheet not found" });
+		}
+
+		return res.status(200).json(updatedSheet);
+	} catch (error) {
+		console.error("Error updating sheet:", error);
+		return res.status(500).json({ success: false, message: "Server error", error });
+	}
+};
+// Update a Sheet
+export const updateStatusSheet = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const { status, remarks } = req.body;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ success: false, message: "Invalid ID format" });
+		}
+
+		const updatedSheet = await Sheet.findByIdAndUpdate(
+			id,
+			{ status },
 			{ new: true, runValidators: true }
 		);
 

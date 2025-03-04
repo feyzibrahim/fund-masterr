@@ -16,10 +16,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { signup } from "../signup";
 import { useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 // Define schema using Zod
 export const SignupSchema = z.object({
-	email: z.string().email("Invalid email address"),
+	email: z.string().optional(),
+	phoneNumber: z.string().optional(),
 	password: z.string().min(6, "Password must be at least 6 characters"),
 	confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -30,11 +32,14 @@ export default function SignupForm() {
 	const router = useRouter();
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 	const form = useForm<SignupFormValues>({
 		resolver: zodResolver(SignupSchema),
 		defaultValues: {
 			email: "",
+			phoneNumber: "",
 			password: "",
 			confirmPassword: "",
 		},
@@ -72,6 +77,19 @@ export default function SignupForm() {
 						</FormItem>
 					)}
 				/>
+				<FormField
+					control={form.control}
+					name="phoneNumber"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Phone Number</FormLabel>
+							<FormControl>
+								<Input placeholder="Enter your phone number" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
 				{/* Password Field */}
 				<FormField
@@ -81,11 +99,24 @@ export default function SignupForm() {
 						<FormItem>
 							<FormLabel>Password</FormLabel>
 							<FormControl>
-								<Input
-									type="password"
-									placeholder="Enter your password"
-									{...field}
-								/>
+								<div className="relative">
+									<Input
+										type={showPassword ? "text" : "password"}
+										placeholder="Enter your password"
+										{...field}
+									/>
+									<button
+										type="button"
+										className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+										onClick={() => setShowPassword(!showPassword)}
+									>
+										{showPassword ? (
+											<AiOutlineEyeInvisible />
+										) : (
+											<AiOutlineEye />
+										)}
+									</button>
+								</div>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -98,11 +129,26 @@ export default function SignupForm() {
 						<FormItem>
 							<FormLabel>Confirm Password</FormLabel>
 							<FormControl>
-								<Input
-									type="password"
-									placeholder="Enter your password again"
-									{...field}
-								/>
+								<div className="relative">
+									<Input
+										type={showConfirmPassword ? "text" : "password"}
+										placeholder="Enter your password again"
+										{...field}
+									/>
+									<button
+										type="button"
+										className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+										onClick={() =>
+											setShowConfirmPassword(!showConfirmPassword)
+										}
+									>
+										{showConfirmPassword ? (
+											<AiOutlineEyeInvisible />
+										) : (
+											<AiOutlineEye />
+										)}
+									</button>
+								</div>
 							</FormControl>
 							<FormMessage />
 						</FormItem>

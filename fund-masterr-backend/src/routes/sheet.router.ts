@@ -5,6 +5,7 @@ import {
 	getSheetById,
 	updateSheet,
 	deleteSheet,
+	updateStatusSheet,
 } from "../controllers/sheet.controller";
 
 const sheetRouter = express.Router();
@@ -12,7 +13,8 @@ const sheetRouter = express.Router();
 sheetRouter.post("/", createSheet);
 sheetRouter.get("/", getAllSheets);
 sheetRouter.get("/:id", getSheetById);
-sheetRouter.put("/:id", updateSheet);
+sheetRouter.patch("/update-status/:id", updateStatusSheet);
+sheetRouter.patch("/:id", updateSheet);
 sheetRouter.delete("/:id", deleteSheet);
 
 export default sheetRouter;
