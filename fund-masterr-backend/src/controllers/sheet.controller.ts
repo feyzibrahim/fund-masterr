@@ -148,6 +148,73 @@ export const getAllSheets = async (req: Request, res: Response) => {
 	}
 };
 
+export const getSheetsStats = async (req: Request, res: Response) => {
+	const userId = await getUserIdFromRequest(req);
+
+	try {
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		const query: any = {};
+		const { start, end } = getStartAndEndDate(req, res); // Get today's start and end time
+		query.createdAt = { $gte: start, $lte: end };
+
+		if (user.role === "payer") {
+			query.createdBy = userId;
+		} else {
+			const contact = await Contact.findOne({ phone: user.phoneNumber });
+			if (!contact) {
+				return res
+					.status(404)
+					.json({ success: false, message: "Contact not found" });
+			}
+			query.agent = contact._id;
+		}
+		console.log("🚀 ~ sheet.controller.ts:164 ~ getSheetsStats ~ query:", query);
+
+		// Aggregation to get stats
+		const stats = await Sheet.aggregate([
+			// { $match: query },
+			{
+				$group: {
+					_id: null,
+					totalSheets: { $sum: 1 },
+					delivered: {
+						$sum: { $cond: [{ $eq: ["$status", "delivered"] }, 1, 0] },
+					},
+					cancelled: {
+						$sum: { $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0] },
+					},
+					pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
+					totalAmountDelivered: {
+						$sum: {
+							$cond: [{ $eq: ["$status", "delivered"] }, "$amount", 0],
+						},
+					},
+				},
+			},
+		]);
+
+		return res.status(200).json(
+			stats.length
+				? stats[0]
+				: {
+						totalSheets: 0,
+						delivered: 0,
+						cancelled: 0,
+						pending: 0,
+						totalAmountDelivered: 0,
+				  }
+		);
+	} catch (error) {
+		console.error("Error fetching sheets stats:", error);
+		return res.status(500).json({ success: false, message: "Server error", error });
+	}
+};
+
 // Get a single Sheet by ID
 export const getSheetById = async (req: Request, res: Response) => {
 	try {
