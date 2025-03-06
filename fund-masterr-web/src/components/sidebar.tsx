@@ -24,22 +24,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			isActive?: boolean;
 			items: { title: string; url: string }[];
 		}[];
-	}>();
+	} | null>();
 
 	useLayoutEffect(() => {
 		const fetchUserDetails = async () => {
-			const session = await getSession();
-			if (session) {
-				const user = await AxiosRequest.get<IUser>(`/user/${session._id}`);
-				const navMain = sidebarContent.find(
-					(content) => content.role === user.role
-				)?.content;
-				if (navMain) {
-					setData({
-						user: user,
-						navMain: navMain,
-					});
+			try {
+				const session = await getSession();
+				if (session) {
+					const user = await AxiosRequest.get<IUser>(`/user/${session._id}`);
+					const navMain = sidebarContent.find(
+						(content) => content.role === user.role
+					)?.content;
+					if (navMain) {
+						setData({
+							user: user,
+							navMain: navMain,
+						});
+					}
 				}
+			} catch (error) {
+				setData(null);
 			}
 		};
 

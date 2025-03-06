@@ -159,13 +159,14 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 		}
 
 		const query: any = {};
-		const { start, end } = getStartAndEndDate(req, res); // Get today's start and end time
-		query.createdAt = { $gte: start, $lte: end };
 
 		if (user.role === "payer") {
-			query.createdBy = userId;
+			query.createdBy = new mongoose.Types.ObjectId(userId);
 		} else {
-			const contact = await Contact.findOne({ phone: user.phoneNumber });
+			const contact = await Contact.findOne({
+				$or: [{ phone: user.phoneNumber }, { email: user.email }],
+			});
+
 			if (!contact) {
 				return res
 					.status(404)
@@ -173,14 +174,17 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 			}
 			query.agent = contact._id;
 		}
-		console.log("🚀 ~ sheet.controller.ts:164 ~ getSheetsStats ~ query:", query);
 
-		// Aggregation to get stats
+		// Aggregation to get stats for the last 7 days
 		const stats = await Sheet.aggregate([
-			// { $match: query },
+			{ $match: query },
 			{
 				$group: {
-					_id: null,
+					_id: {
+						day: { $dayOfMonth: "$createdAt" },
+						month: { $month: "$createdAt" },
+						year: { $year: "$createdAt" },
+					},
 					totalSheets: { $sum: 1 },
 					delivered: {
 						$sum: { $cond: [{ $eq: ["$status", "delivered"] }, 1, 0] },
@@ -196,19 +200,43 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 					},
 				},
 			},
+			{
+				$sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
+			},
+			{
+				$limit: 7,
+			},
 		]);
 
-		return res.status(200).json(
-			stats.length
-				? stats[0]
-				: {
-						totalSheets: 0,
-						delivered: 0,
-						cancelled: 0,
-						pending: 0,
-						totalAmountDelivered: 0,
-				  }
-		);
+		const formattedStats = stats.map((stat) => ({
+			date: `${stat._id.year}-${stat._id.month}-${stat._id.day}`,
+			totalSheets: stat.totalSheets,
+			delivered: stat.delivered,
+			cancelled: stat.cancelled,
+			pending: stat.pending,
+			totalAmountDelivered: stat.totalAmountDelivered,
+		}));
+
+		// Fill the rest of the days with 0 if there is not enough data for the last 7 days
+		while (formattedStats.length < 7) {
+			const lastDate =
+				formattedStats.length > 0
+					? new Date(formattedStats[formattedStats.length - 1].date)
+					: new Date();
+			lastDate.setDate(lastDate.getDate() - 1);
+			formattedStats.push({
+				date: `${lastDate.getFullYear()}-${
+					lastDate.getMonth() + 1
+				}-${lastDate.getDate()}`,
+				totalSheets: 0,
+				delivered: 0,
+				cancelled: 0,
+				pending: 0,
+				totalAmountDelivered: 0,
+			});
+		}
+
+		return res.status(200).json(formattedStats);
 	} catch (error) {
 		console.error("Error fetching sheets stats:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });

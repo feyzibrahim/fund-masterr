@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Bar, BarChart, XAxis } from "recharts";
 
 import {
 	ChartConfig,
@@ -10,44 +10,60 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-	{ month: "January", desktop: 186, mobile: 80 },
-	{ month: "February", desktop: 305, mobile: 200 },
-	{ month: "March", desktop: 237, mobile: 120 },
-	{ month: "April", desktop: 73, mobile: 190 },
-	{ month: "May", desktop: 209, mobile: 130 },
-	{ month: "June", desktop: 214, mobile: 140 },
-];
+import { IStats } from "@/types/stats-types";
 
 const chartConfig = {
-	desktop: {
-		label: "Desktop",
-		color: "#2563eb",
+	totalSheets: {
+		label: "Total Sheets",
+		color: "#294dff",
 	},
-	mobile: {
-		label: "Mobile",
-		color: "#60a5fa",
+	delivered: {
+		label: "Delivered",
+		color: "#32a852",
+	},
+	cancelled: {
+		label: "Cancelled",
+		color: "#ff2942",
+	},
+	pending: {
+		label: "Pending",
+		color: "#ffc629",
 	},
 } satisfies ChartConfig;
 
-export function DashboardChart() {
+interface Props {
+	stats: IStats[];
+}
+
+export function DashboardChart({ stats }: Props) {
+	const chartData = stats
+		.slice()
+		.reverse()
+		.map((stat) => ({
+			label: stat.date,
+			totalSheets: stat.totalSheets,
+			delivered: stat.delivered,
+			cancelled: stat.cancelled,
+			pending: stat.pending,
+		}));
+
 	return (
-		<ChartContainer config={chartConfig} className="h-[70vh] w-full">
+		<ChartContainer config={chartConfig} className="h-[65vh] w-full">
 			<BarChart accessibilityLayer data={chartData}>
 				<CartesianGrid vertical={false} />
 				<XAxis
-					dataKey="month"
+					dataKey="label"
 					tickLine={false}
 					tickMargin={10}
 					axisLine={false}
-					tickFormatter={(value) => value.slice(0, 3)}
 				/>
 				<ChartTooltip content={<ChartTooltipContent />} />
 				<ChartLegend content={<ChartLegendContent />} />
 
-				<Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-				<Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+				<Bar dataKey="totalSheets" fill="var(--color-totalSheets)" radius={4} />
+				<Bar dataKey="delivered" fill="var(--color-delivered)" radius={4} />
+				<Bar dataKey="cancelled" fill="var(--color-cancelled)" radius={4} />
+				<Bar dataKey="pending" fill="var(--color-pending)" radius={4} />
 			</BarChart>
 		</ChartContainer>
 	);
