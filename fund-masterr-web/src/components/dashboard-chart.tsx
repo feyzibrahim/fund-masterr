@@ -36,16 +36,13 @@ interface Props {
 }
 
 export function DashboardChart({ stats }: Props) {
-	const chartData = stats
-		.slice()
-		.reverse()
-		.map((stat) => ({
-			label: stat.date,
-			totalSheets: stat.totalSheets,
-			delivered: stat.delivered,
-			cancelled: stat.cancelled,
-			pending: stat.pending,
-		}));
+	const chartData = stats.map((stat) => ({
+		label: stat.date,
+		totalSheets: stat.totalSheets,
+		delivered: stat.delivered,
+		cancelled: stat.cancelled,
+		pending: stat.pending,
+	}));
 
 	return (
 		<ChartContainer config={chartConfig} className="h-[65vh] w-full">

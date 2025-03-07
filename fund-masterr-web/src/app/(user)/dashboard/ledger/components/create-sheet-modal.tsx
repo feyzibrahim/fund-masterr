@@ -11,8 +11,13 @@ import {
 import { FilePlus } from "lucide-react";
 import { useState } from "react";
 import { CreateSheetForm } from "./create-sheet-form";
+import { ILedger } from "@/types/ledger-types";
 
-export function CreateSheetModal() {
+interface Props {
+	ledger?: ILedger;
+}
+
+export function CreateSheetModal({ ledger }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -26,7 +31,7 @@ export function CreateSheetModal() {
 				<DialogHeader>
 					<DialogTitle>Add Sheets</DialogTitle>
 				</DialogHeader>
-				<CreateSheetForm setIsOpen={setIsOpen} />
+				{ledger && <CreateSheetForm setIsOpen={setIsOpen} ledger={ledger} />}
 			</DialogContent>
 		</Dialog>
 	);

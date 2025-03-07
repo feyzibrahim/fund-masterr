@@ -26,7 +26,7 @@ export default async function UserSheetsPage({ params }: Props) {
 					</TabsList>
 					<div className="space-x-2">
 						<AddFundModal />
-						<CreateSheetModal />
+						<CreateSheetModal ledger={ledger} />
 					</div>
 				</div>
 				<TabsContent value="sheets">

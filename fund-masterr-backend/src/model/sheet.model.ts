@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 // Define the interface for the Sheet document
 export interface ISheet extends Document {
+	id?: number;
 	amount: number;
 	status: "pending" | "delivered" | "cancelled";
 	statusChangeLogs: { status: string; timestamp: Date }[];
@@ -13,6 +14,10 @@ export interface ISheet extends Document {
 // Define the schema for the Sheet model
 const SheetSchema: Schema = new Schema(
 	{
+		id: {
+			type: Number,
+			default: null,
+		},
 		amount: {
 			type: Number,
 			required: true,

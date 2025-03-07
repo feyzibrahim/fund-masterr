@@ -15,7 +15,7 @@ export const createSheet = async (req: Request, res: Response) => {
 	session.startTransaction(); // Begin the transaction
 
 	try {
-		const { amount, status, ledgerId, agent } = req.body;
+		const { id, amount, status, ledgerId, agent } = req.body;
 
 		let ledgerIds = [ledgerId];
 
@@ -55,6 +55,7 @@ export const createSheet = async (req: Request, res: Response) => {
 		}
 
 		const newSheet = new Sheet({
+			id,
 			amount,
 			status,
 			createdBy: userId,
@@ -175,9 +176,18 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 			query.agent = contact._id;
 		}
 
+		// Get the date 7 days ago from today
+		const sevenDaysAgo = new Date();
+		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // We need today + last 6 days
+
 		// Aggregation to get stats for the last 7 days
 		const stats = await Sheet.aggregate([
-			{ $match: query },
+			{
+				$match: {
+					...query,
+					createdAt: { $gte: sevenDaysAgo }, // Only consider the last 7 days
+				},
+			},
 			{
 				$group: {
 					_id: {
@@ -201,40 +211,48 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 				},
 			},
 			{
-				$sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
-			},
-			{
-				$limit: 7,
+				$sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }, // Sort oldest to newest
 			},
 		]);
 
-		const formattedStats = stats.map((stat) => ({
-			date: `${stat._id.year}-${stat._id.month}-${stat._id.day}`,
-			totalSheets: stat.totalSheets,
-			delivered: stat.delivered,
-			cancelled: stat.cancelled,
-			pending: stat.pending,
-			totalAmountDelivered: stat.totalAmountDelivered,
-		}));
+		// Create a map from existing stats
+		const statsMap = new Map(
+			stats.map((stat) => [
+				`${stat._id.year}-${stat._id.month}-${stat._id.day}`,
+				{
+					date: `${stat._id.year}-${stat._id.month}-${stat._id.day}`,
+					totalSheets: stat.totalSheets,
+					delivered: stat.delivered,
+					cancelled: stat.cancelled,
+					pending: stat.pending,
+					totalAmountDelivered: stat.totalAmountDelivered,
+				},
+			])
+		);
 
-		// Fill the rest of the days with 0 if there is not enough data for the last 7 days
-		while (formattedStats.length < 7) {
-			const lastDate =
-				formattedStats.length > 0
-					? new Date(formattedStats[formattedStats.length - 1].date)
-					: new Date();
-			lastDate.setDate(lastDate.getDate() - 1);
-			formattedStats.push({
-				date: `${lastDate.getFullYear()}-${
-					lastDate.getMonth() + 1
-				}-${lastDate.getDate()}`,
-				totalSheets: 0,
-				delivered: 0,
-				cancelled: 0,
-				pending: 0,
-				totalAmountDelivered: 0,
-			});
+		// Ensure last 7 days are included (fill missing days with zero)
+		const formattedStats = [];
+		for (let i = 0; i < 7; i++) {
+			const date = new Date();
+			date.setDate(date.getDate() - i);
+			const formattedDate = `${date.getFullYear()}-${
+				date.getMonth() + 1
+			}-${date.getDate()}`;
+
+			formattedStats.push(
+				statsMap.get(formattedDate) || {
+					date: formattedDate,
+					totalSheets: 0,
+					delivered: 0,
+					cancelled: 0,
+					pending: 0,
+					totalAmountDelivered: 0,
+				}
+			);
 		}
+
+		// Reverse to have latest date at the end
+		formattedStats.reverse();
 
 		return res.status(200).json(formattedStats);
 	} catch (error) {
@@ -272,17 +290,22 @@ export const getSheetById = async (req: Request, res: Response) => {
 export const updateSheet = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		const { amount, status, assignedTo } = req.body;
+		const { amount, status, assignedTo, payer } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(id)) {
 			return res.status(400).json({ success: false, message: "Invalid ID format" });
 		}
 
-		const updatedSheet = await Sheet.findByIdAndUpdate(
-			id,
-			{ amount, status, assignedTo },
-			{ new: true, runValidators: true }
-		);
+		const updateData: any = {};
+		if (amount !== undefined) updateData.amount = amount;
+		if (status !== undefined) updateData.status = status;
+		if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+		if (payer !== undefined) updateData.payer = payer;
+
+		const updatedSheet = await Sheet.findByIdAndUpdate(id, updateData, {
+			new: true,
+			runValidators: true,
+		});
 
 		if (!updatedSheet) {
 			return res.status(404).json({ success: false, message: "Sheet not found" });
@@ -294,6 +317,7 @@ export const updateSheet = async (req: Request, res: Response) => {
 		return res.status(500).json({ success: false, message: "Server error", error });
 	}
 };
+
 // Update a Sheet
 export const updateStatusSheet = async (req: Request, res: Response) => {
 	try {

@@ -22,6 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { AxiosRequest } from "@/lib/axios.instance";
 import { cn } from "@/lib/utils";
 import { IContact } from "@/types/contact-types";
+import { ILedger } from "@/types/ledger-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -29,11 +30,11 @@ import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createNewSheet } from "./action";
-import { useParams } from "next/navigation";
 
 // Define the Zod schema for validation
 const ledgerSchema = z.object({
 	agent: z.string().optional(),
+	payer: z.string().optional(),
 	amount: z.number().min(0, "Amount is required"),
 	ledgerId: z.string(),
 });
@@ -42,39 +43,42 @@ export type SheetFormValues = z.infer<typeof ledgerSchema>;
 
 interface Props {
 	setIsOpen: (val: boolean) => void;
+	ledger: ILedger;
 }
 
-export function CreateSheetForm({ setIsOpen }: Props) {
-	const params = useParams();
-	const ledgerId = params.id as string;
-
-	const [agents, setAgents] = useState<IContact[]>([]);
+export function CreateSheetForm({ setIsOpen, ledger }: Props) {
+	const defaultContactType = ledger.contact.type === "agent" ? "payer" : "agent";
+	const [contacts, setContacts] = useState<IContact[]>([]);
 	let [errorMessage, setErrorMessage] = useState("");
 
-	const loadContacts = async () => {
-		try {
-			const response = await AxiosRequest.get<IContact[]>(`/contact?type=agent`);
-			setAgents(response);
-		} catch (error: any) {
-			setErrorMessage(error.message ?? "An error occurred while fetching agents.");
-		}
-	};
-
 	useLayoutEffect(() => {
+		const loadContacts = async () => {
+			try {
+				const response = await AxiosRequest.get<IContact[]>(
+					`/contact?type=${defaultContactType}`
+				);
+				setContacts(response);
+			} catch (error: any) {
+				setErrorMessage(
+					error.message ?? "An error occurred while fetching contacts."
+				);
+			}
+		};
 		loadContacts();
-	}, []);
+	}, [defaultContactType]);
 
 	const form = useForm<SheetFormValues>({
 		resolver: zodResolver(ledgerSchema),
 		defaultValues: {
 			agent: "",
+			payer: "",
 			amount: 0,
-			ledgerId: ledgerId,
+			ledgerId: ledger._id,
 		},
 	});
 
 	const onSubmit = async (data: SheetFormValues) => {
-		const res = await createNewSheet(data, ledgerId);
+		const res = await createNewSheet(data, ledger._id);
 		if (res.success) {
 			form.reset();
 			setIsOpen(false);
@@ -110,12 +114,14 @@ export function CreateSheetForm({ setIsOpen }: Props) {
 
 				{/* Agent Field */}
 				<FormField
-					name="agent"
+					name={defaultContactType}
 					control={form.control}
 					render={({ field }) => (
 						<FormItem>
 							<div className="space-y-3">
-								<FormLabel>Agent</FormLabel>
+								<FormLabel className="capitalize">
+									{defaultContactType}
+								</FormLabel>
 								<FormControl>
 									<Popover>
 										<PopoverTrigger asChild>
@@ -131,19 +137,19 @@ export function CreateSheetForm({ setIsOpen }: Props) {
 												>
 													{field.value
 														? `${
-																agents.find(
-																	(agent) =>
-																		agent._id ===
+																contacts.find(
+																	(contact) =>
+																		contact._id ===
 																		field.value
 																)?.firstName
 														  } ${
-																agents.find(
-																	(agent) =>
-																		agent._id ===
+																contacts.find(
+																	(contact) =>
+																		contact._id ===
 																		field.value
 																)?.lastName
 														  }`
-														: "Select agent"}
+														: `Select ${defaultContactType}`}
 													<ChevronsUpDown className="opacity-50 w-4 h-4" />
 												</Button>
 											</FormControl>
@@ -159,24 +165,25 @@ export function CreateSheetForm({ setIsOpen }: Props) {
 														No framework found.
 													</CommandEmpty>
 													<CommandGroup>
-														{agents.map((agent) => (
+														{contacts.map((contact) => (
 															<CommandItem
-																value={agent._id}
-																key={agent._id}
+																value={contact._id}
+																key={contact._id}
 																onSelect={() => {
 																	form.setValue(
-																		"agent",
-																		agent._id
+																		defaultContactType,
+																		contact._id
 																	);
 																}}
 															>
 																<PopoverClose className="w-full flex items-center ">
-																	{agent.firstName}{" "}
-																	{agent.lastName ?? ""}
+																	{contact.firstName}{" "}
+																	{contact.lastName ??
+																		""}
 																	<Check
 																		className={cn(
 																			"ml-auto",
-																			agent._id ===
+																			contact._id ===
 																				field.value
 																				? "opacity-100"
 																				: "opacity-0"
