@@ -6,29 +6,11 @@ export const getStartAndEndDate = (
 ): { start: Date; end: Date } => {
 	const queryDate = req.query.date ? new Date(req.query.date as string) : new Date();
 
-	// Ensure date is based on UTC
-	const start = new Date(
-		Date.UTC(
-			queryDate.getUTCFullYear(),
-			queryDate.getUTCMonth(),
-			queryDate.getUTCDate(),
-			0,
-			0,
-			0,
-			0
-		)
-	);
-	const end = new Date(
-		Date.UTC(
-			queryDate.getUTCFullYear(),
-			queryDate.getUTCMonth(),
-			queryDate.getUTCDate(),
-			23,
-			59,
-			59,
-			999
-		)
-	);
+	const start = new Date(queryDate);
+	start.setHours(0, 0, 0, 0);
+
+	const end = new Date(queryDate);
+	end.setHours(23, 59, 59, 999);
 
 	return { start, end };
 };

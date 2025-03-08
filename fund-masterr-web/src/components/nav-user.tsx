@@ -27,8 +27,11 @@ import {
 } from "@/components/ui/sidebar";
 import { logout } from "@/lib/auth-utils";
 import { IUser } from "@/types/user-types";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function NavUser({ user }: { user: IUser }) {
+	const pathname = usePathname();
 	const { isMobile } = useSidebar();
 
 	const handleLogout = async () => {
@@ -100,17 +103,50 @@ export function NavUser({ user }: { user: IUser }) {
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem className="flex items-center gap-3">
-								<BadgeCheck className="w-4 h-4" />
-								Account
+							<DropdownMenuItem
+								className={`${
+									pathname === "/dashboard/settings"
+										? "bg-muted hover:bg-muted"
+										: "hover:bg-transparent hover:underline"
+								}`}
+							>
+								<Link
+									href="/dashboard/settings"
+									className={`flex items-center gap-3`}
+								>
+									<BadgeCheck className="w-4 h-4" />
+									Account
+								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem className="flex items-center gap-3">
-								<CreditCard className="w-4 h-4" />
-								Billing
+							<DropdownMenuItem
+								className={`${
+									pathname === "/dashboard/settings/billing"
+										? "bg-muted hover:bg-muted"
+										: "hover:bg-transparent hover:underline"
+								}`}
+							>
+								<Link
+									href="/dashboard/settings/billing"
+									className={`flex items-center gap-3`}
+								>
+									<CreditCard className="w-4 h-4" />
+									Billing
+								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem className="flex items-center gap-3">
-								<Bell className="w-4 h-4" />
-								Notifications
+							<DropdownMenuItem
+								className={`${
+									pathname === "/dashboard/settings/notifications"
+										? "bg-muted hover:bg-muted"
+										: "hover:bg-transparent hover:underline"
+								}`}
+							>
+								<Link
+									href="/dashboard/settings/notifications"
+									className={`flex items-center gap-3`}
+								>
+									<Bell className="w-4 h-4" />
+									Notifications
+								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />

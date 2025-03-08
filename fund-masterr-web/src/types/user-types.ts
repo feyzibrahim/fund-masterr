@@ -3,9 +3,9 @@ export interface IUser {
 	firstName?: string;
 	lastName?: string;
 	email: string;
-	password: string;
+	password?: string;
 	phoneNumber?: number;
-	role: "agent" | "payer" | "admin";
+	role?: "agent" | "payer" | "admin";
 	isActive: boolean;
 	profileImgURL?: string;
 	isEmailVerified?: boolean;

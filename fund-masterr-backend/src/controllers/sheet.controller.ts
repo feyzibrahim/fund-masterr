@@ -15,7 +15,7 @@ export const createSheet = async (req: Request, res: Response) => {
 	session.startTransaction(); // Begin the transaction
 
 	try {
-		const { id, amount, status, ledgerId, agent } = req.body;
+		const { id, amount, status, ledgerId, agent, payer } = req.body;
 
 		let ledgerIds = [ledgerId];
 
@@ -25,13 +25,12 @@ export const createSheet = async (req: Request, res: Response) => {
 			{ session } // Ensure this update is part of the transaction
 		);
 
-		// If agent is provided, check for an existing ledger or create one
-		if (agent) {
+		const updateLedger = async (contact: string) => {
 			const { start, end } = getStartAndEndDate(req, res);
 
 			const existingLedger = await Ledger.findOne(
 				{
-					contact: agent,
+					contact: contact,
 					createdBy: userId,
 					createdAt: { $gte: start, $lte: end },
 				},
@@ -45,13 +44,22 @@ export const createSheet = async (req: Request, res: Response) => {
 				await existingLedger.save({ session });
 			} else {
 				const newLedger = new Ledger({
-					contact: agent,
+					contact: contact,
 					createdBy: userId,
 					activeToday: true,
 				});
 				const savedLedger = await newLedger.save({ session }); // Save within the transaction
 				ledgerIds.push(savedLedger._id);
 			}
+		};
+
+		// If agent is provided, check for an existing ledger or create one
+		if (agent) {
+			await updateLedger(agent);
+		}
+
+		if (payer) {
+			await updateLedger(payer);
 		}
 
 		const newSheet = new Sheet({

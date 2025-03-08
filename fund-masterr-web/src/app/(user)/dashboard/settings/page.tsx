@@ -1,7 +1,14 @@
 import { Separator } from "@/components/ui/separator";
 import { AccountForm } from "./components/account-form";
+import { getUser } from "./action";
 
-export default function SettingsAccountPage() {
+export default async function SettingsAccountPage() {
+	const { user, error } = await getUser();
+
+	if (error || !user) {
+		return <div>{error || "Unexpected Error Occurred Please try later."}</div>;
+	}
+
 	return (
 		<div className="space-y-6">
 			<div>
@@ -11,7 +18,7 @@ export default function SettingsAccountPage() {
 				</p>
 			</div>
 			<Separator />
-			<AccountForm />
+			<AccountForm user={user} />
 		</div>
 	);
 }

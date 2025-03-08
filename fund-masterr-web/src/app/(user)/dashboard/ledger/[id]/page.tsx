@@ -1,6 +1,6 @@
 import { DailySheets } from "../components/daily-sheets";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserDetails } from "../components/user-details";
+import { LedgerDetails } from "../components/ledger-details";
 import { AddFundModal } from "../components/add-fund-modal";
 import { CreateSheetModal } from "../components/create-sheet-modal";
 import { getFunds, getLedger, getSheets } from "./action";
@@ -17,7 +17,7 @@ export default async function UserSheetsPage({ params }: Props) {
 
 	return (
 		<div className="space-y-5">
-			<UserDetails sheets={sheets} funds={funds} ledger={ledger} />
+			<LedgerDetails sheets={sheets} funds={funds} ledger={ledger} />
 			<Tabs defaultValue="sheets" className="w-">
 				<div className="flex items-center justify-between">
 					<TabsList className="flex w-fit">

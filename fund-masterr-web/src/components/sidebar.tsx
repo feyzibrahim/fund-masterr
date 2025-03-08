@@ -31,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			try {
 				const session = await getSession();
 				if (session) {
-					const user = await AxiosRequest.get<IUser>(`/user/${session._id}`);
+					const user = await AxiosRequest.get<IUser>(`/user/me`);
 					const navMain = sidebarContent.find(
 						(content) => content.role === user.role
 					)?.content;

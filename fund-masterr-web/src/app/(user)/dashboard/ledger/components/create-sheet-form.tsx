@@ -47,6 +47,7 @@ interface Props {
 }
 
 export function CreateSheetForm({ setIsOpen, ledger }: Props) {
+	console.log("🚀 ~ create-sheet-form.tsx:50 ~ CreateSheetForm ~ ledger:", ledger);
 	const defaultContactType = ledger.contact.type === "agent" ? "payer" : "agent";
 	const [contacts, setContacts] = useState<IContact[]>([]);
 	let [errorMessage, setErrorMessage] = useState("");
@@ -70,8 +71,8 @@ export function CreateSheetForm({ setIsOpen, ledger }: Props) {
 	const form = useForm<SheetFormValues>({
 		resolver: zodResolver(ledgerSchema),
 		defaultValues: {
-			agent: "",
-			payer: "",
+			agent: ledger.contact.type === "agent" ? ledger.contact._id : "",
+			payer: ledger.contact.type === "payer" ? ledger.contact._id : "",
 			amount: 0,
 			ledgerId: ledger._id,
 		},

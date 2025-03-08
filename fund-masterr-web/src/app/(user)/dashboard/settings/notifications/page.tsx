@@ -1,7 +1,14 @@
 import { Separator } from "@/components/ui/separator";
 import { NotificationsForm } from "../components/notifications-form";
+import { getNotification } from "../action";
 
-export default function SettingsNotificationsPage() {
+export default async function SettingsNotificationsPage() {
+	const { notification, error } = await getNotification();
+
+	if (error || !notification) {
+		return <div>{error || "Unexpected error occurred please try later!!!"}</div>;
+	}
+
 	return (
 		<div className="space-y-6">
 			<div>
@@ -11,7 +18,7 @@ export default function SettingsNotificationsPage() {
 				</p>
 			</div>
 			<Separator />
-			<NotificationsForm />
+			<NotificationsForm notification={notification} />
 		</div>
 	);
 }

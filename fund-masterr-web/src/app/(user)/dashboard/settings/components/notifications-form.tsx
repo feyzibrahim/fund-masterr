@@ -1,9 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -18,6 +14,15 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
+import { AxiosRequest } from "@/lib/axios.instance";
+import { INotification } from "@/types/notification-types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { revalidatePath } from "next/cache";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { updateNotification } from "../action";
 
 const notificationsFormSchema = z.object({
 	type: z.enum(["all", "mentions", "none"], {
@@ -25,36 +30,53 @@ const notificationsFormSchema = z.object({
 	}),
 	mobile: z.boolean().default(false).optional(),
 	communication_emails: z.boolean().default(false).optional(),
-	social_emails: z.boolean().default(false).optional(),
 	marketing_emails: z.boolean().default(false).optional(),
 	security_emails: z.boolean(),
 });
 
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
+export type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<NotificationsFormValues> = {
-	communication_emails: false,
-	marketing_emails: false,
-	social_emails: true,
-	security_emails: true,
-};
+interface Props {
+	notification: INotification;
+}
 
-export function NotificationsForm() {
+export function NotificationsForm({ notification }: Props) {
+	const defaultValues = {
+		type: notification.type,
+		mobile: notification.mobile,
+		communication_emails: notification.communication_emails,
+		marketing_emails: notification.marketing_emails,
+		security_emails: notification.security_emails,
+	};
+
 	const form = useForm<NotificationsFormValues>({
 		resolver: zodResolver(notificationsFormSchema),
 		defaultValues,
 	});
 
-	function onSubmit(data: NotificationsFormValues) {
-		toast({
-			title: "You submitted the following values:",
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
-		});
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	async function onSubmit(data: NotificationsFormValues) {
+		setLoading(true);
+		setError(null);
+
+		const res = await updateNotification(data, notification._id);
+
+		if (res.success) {
+			toast({
+				title: "Success",
+				description: "Your notification settings have been updated.",
+			});
+			setError(null);
+		} else {
+			setError("Failed to update notification settings.");
+			toast({
+				title: "Error",
+				description: "Failed to update notification settings.",
+			});
+		}
+		setLoading(false);
 	}
 
 	return (
@@ -85,7 +107,7 @@ export function NotificationsForm() {
 											<RadioGroupItem value="mentions" />
 										</FormControl>
 										<FormLabel className="font-normal">
-											Direct messages and mentions
+											Sheet delivery & cancellations
 										</FormLabel>
 									</FormItem>
 									<FormItem className="flex items-center space-x-3 space-y-0">
@@ -152,29 +174,6 @@ export function NotificationsForm() {
 						/>
 						<FormField
 							control={form.control}
-							name="social_emails"
-							render={({ field }) => (
-								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-									<div className="space-y-0.5">
-										<FormLabel className="text-base">
-											Social emails
-										</FormLabel>
-										<FormDescription>
-											Receive emails for friend requests, follows,
-											and more.
-										</FormDescription>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
 							name="security_emails"
 							render={({ field }) => (
 								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -223,7 +222,10 @@ export function NotificationsForm() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Update notifications</Button>
+				<Button type="submit" disabled={loading}>
+					{loading ? "Updating..." : "Update notifications"}
+				</Button>
+				{error && <p className="text-red-500 text-xs">{error}</p>}
 			</form>
 		</Form>
 	);

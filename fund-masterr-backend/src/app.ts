@@ -11,6 +11,7 @@ import fundRouter from "./routes/fund.router";
 import ledgerRouter from "./routes/ledger.router";
 import sheetRouter from "./routes/sheet.router";
 import userRouter from "./routes/user.router";
+import notificationRouter from "./routes/notification.router";
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use("/api/ledger", requireAuth, ledgerRouter);
 app.use("/api/sheet", requireAuth, sheetRouter);
 app.use("/api/user", requireAuth, userRouter);
 app.use("/api/fund", requireAuth, fundRouter);
+app.use("/api/notification", requireAuth, notificationRouter);
 
 // Public Api for accessing images
 app.use("/api/img", express.static(__dirname + "/public/"));

@@ -99,16 +99,16 @@ export const sidebarContent = [
 						url: "/dashboard/settings",
 					},
 					{
+						title: "Billing",
+						url: "/dashboard/billing",
+					},
+					{
 						title: "Appearance",
 						url: "/dashboard/settings/appearance",
 					},
 					{
 						title: "Notifications",
 						url: "/dashboard/settings/notifications",
-					},
-					{
-						title: "Privacy",
-						url: "/dashboard/settings/privacy",
 					},
 				],
 			},

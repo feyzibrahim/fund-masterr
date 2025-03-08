@@ -1,17 +1,17 @@
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { IFund } from "@/types/fund-types";
 import { ILedger } from "@/types/ledger-types";
 import { ISheet } from "@/types/sheet-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-type UserDetailsProps = {
+type LedgerDetailsProps = {
 	sheets?: ISheet[];
 	funds?: IFund[];
 	ledger?: ILedger;
 };
 
-export function UserDetails({ sheets, funds, ledger }: UserDetailsProps) {
+export function LedgerDetails({ sheets, funds, ledger }: LedgerDetailsProps) {
 	const calcGrandTotal = () => {
 		let grandTotal = 0;
 		if (ledger && ledger.oldBalance) {
@@ -34,18 +34,26 @@ export function UserDetails({ sheets, funds, ledger }: UserDetailsProps) {
 		return grandTotal;
 	};
 
+	if (!ledger) return null;
+
 	return (
 		<Card>
 			<CardContent className="py-5">
 				<div className="grid grid-cols-2 gap-4">
 					<div>
-						<h2 className="text-2xl font-bold mb-2">
-							{ledger &&
-								`${ledger.contact.firstName} ${ledger.contact.lastName}`}
-						</h2>
-						<p className="text-foreground-secondary">
-							{ledger && ledger.contact.email}
-						</p>
+						<div className="flex items-center gap-4">
+							<h2 className="text-2xl font-bold">
+								{`${ledger.contact.firstName} ${ledger.contact.lastName}`}
+							</h2>
+							<p className="text-foreground-secondary">
+								{ledger.contact.email}
+							</p>
+						</div>
+						{ledger.createdAt && (
+							<p className="text-foreground-secondary text-xs pt-2">
+								{formatDate(ledger.createdAt)}
+							</p>
+						)}
 					</div>
 					<div className="text-right">
 						<p className="text-lg font-semibold">
