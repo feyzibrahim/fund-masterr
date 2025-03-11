@@ -28,8 +28,8 @@ export async function deleteLedger(id: string) {
 
 export async function createNewSheet(formData: SheetFormValues, ledgerId: string) {
 	try {
-		await AxiosRequest.post("/sheet", { ...formData });
-		revalidatePath(`/dashboard/sheet/${ledgerId}`);
+		await AxiosRequest.post("/transaction", { ...formData });
+		revalidatePath(`/dashboard/transaction/${ledgerId}`);
 		return { success: true };
 	} catch (error: any) {
 		return { success: false, error: error.message };
@@ -39,7 +39,7 @@ export async function createNewSheet(formData: SheetFormValues, ledgerId: string
 export async function createNewFund(formData: FundFormValues, ledgerId: string) {
 	try {
 		await AxiosRequest.post("/fund", { ...formData });
-		revalidatePath(`/dashboard/sheet/${ledgerId}`);
+		revalidatePath(`/dashboard/transaction/fund/${ledgerId}`);
 		return { success: true };
 	} catch (error: any) {
 		return { success: false, error: error.message };

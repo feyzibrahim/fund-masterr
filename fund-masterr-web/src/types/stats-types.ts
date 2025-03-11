@@ -1,6 +1,6 @@
 export interface IStats {
 	date: string;
-	totalSheets: number;
+	totalTransactions: number;
 	delivered: number;
 	cancelled: number;
 	pending: number;

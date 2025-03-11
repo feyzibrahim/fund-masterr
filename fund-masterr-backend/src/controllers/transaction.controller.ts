@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Ledger from "../model/ledger.model";
-import Sheet from "../model/sheet.model";
+import Transaction, { ITransaction } from "../model/transaction.model";
 import { getStartAndEndDate } from "../util/get-start-and-end-date";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
 import User from "../model/user.model";
 import Contact from "../model/contact.model";
+import { ITransactionCreateDTO } from "../dto/transaction.dto";
 
-// Create a new Sheet with a transaction and update ledger balances
-export const createSheet = async (req: Request, res: Response) => {
+// Create a new Transaction with a transaction and update ledger balances
+export const createTransaction = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	const session = await mongoose.startSession(); // Start a session
@@ -21,7 +22,7 @@ export const createSheet = async (req: Request, res: Response) => {
 
 		await Ledger.updateOne(
 			{ _id: ledgerId },
-			{ $set: { activeToday: true } },
+			{ $set: { lastUpdated: Date.now() } },
 			{ session } // Ensure this update is part of the transaction
 		);
 
@@ -40,13 +41,14 @@ export const createSheet = async (req: Request, res: Response) => {
 
 			if (existingLedger) {
 				ledgerIds.push(existingLedger._id);
-				existingLedger.activeToday = true;
+				existingLedger.lastUpdated = new Date();
+				existingLedger.balance -= amount;
 				await existingLedger.save({ session });
 			} else {
 				const newLedger = new Ledger({
 					contact: contact,
 					createdBy: userId,
-					activeToday: true,
+					balance: amount,
 				});
 				const savedLedger = await newLedger.save({ session }); // Save within the transaction
 				ledgerIds.push(savedLedger._id);
@@ -62,21 +64,22 @@ export const createSheet = async (req: Request, res: Response) => {
 			await updateLedger(payer);
 		}
 
-		const newSheet = new Sheet({
+		const newTransaction = new Transaction({
 			id,
 			amount,
 			status,
 			createdBy: userId,
 			ledgerIds: ledgerIds,
 			agent: agent || null,
+			payer: payer || null,
 		});
 
-		await newSheet.save({ session }); // Save within the transaction
+		await newTransaction.save({ session }); // Save within the transaction
 
 		await session.commitTransaction(); // Commit the transaction
 		session.endSession();
 
-		return res.status(201).json(newSheet);
+		return res.status(201).json(newTransaction);
 	} catch (error) {
 		await session.abortTransaction(); // Rollback the transaction on error
 		session.endSession();
@@ -86,8 +89,8 @@ export const createSheet = async (req: Request, res: Response) => {
 	}
 };
 
-// Get all Sheets
-export const getAllSheets = async (req: Request, res: Response) => {
+// Get all Transactions
+export const getAllTransactions = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	try {
@@ -99,11 +102,16 @@ export const getAllSheets = async (req: Request, res: Response) => {
 
 		const ledgerId = req.query.ledger;
 		const status = req.query.status;
+		const type = req.query.type;
 
 		const query: any = {};
 
 		if (status) {
 			query.status = status;
+		}
+
+		if (type) {
+			query.type = type;
 		}
 
 		if (user.role === "payer") {
@@ -115,12 +123,13 @@ export const getAllSheets = async (req: Request, res: Response) => {
 				query.createdBy = userId;
 			}
 
-			const sheets = await Sheet.find(query)
+			const sheets = await Transaction.find(query)
 				.sort({
 					createdAt: -1,
 				})
 				.populate("createdBy", "firstName lastName phoneNumber")
 				.populate("agent", "firstName lastName phone")
+				.populate("payer", "firstName lastName phone")
 				.populate({
 					path: "ledgerIds",
 					populate: {
@@ -142,7 +151,7 @@ export const getAllSheets = async (req: Request, res: Response) => {
 			const { start, end } = getStartAndEndDate(req, res);
 			query.createdAt = { $gte: start, $lte: end };
 
-			const sheets = await Sheet.find(query)
+			const sheets = await Transaction.find(query)
 				.sort({
 					createdAt: -1,
 				})
@@ -157,7 +166,7 @@ export const getAllSheets = async (req: Request, res: Response) => {
 	}
 };
 
-export const getSheetsStats = async (req: Request, res: Response) => {
+export const getTransactionsStats = async (req: Request, res: Response) => {
 	const userId = await getUserIdFromRequest(req);
 
 	try {
@@ -189,7 +198,7 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // We need today + last 6 days
 
 		// Aggregation to get stats for the last 7 days
-		const stats = await Sheet.aggregate([
+		const stats = await Transaction.aggregate([
 			{
 				$match: {
 					...query,
@@ -203,7 +212,7 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 						month: { $month: "$createdAt" },
 						year: { $year: "$createdAt" },
 					},
-					totalSheets: { $sum: 1 },
+					totalTransactions: { $sum: 1 },
 					delivered: {
 						$sum: { $cond: [{ $eq: ["$status", "delivered"] }, 1, 0] },
 					},
@@ -229,7 +238,7 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 				`${stat._id.year}-${stat._id.month}-${stat._id.day}`,
 				{
 					date: `${stat._id.year}-${stat._id.month}-${stat._id.day}`,
-					totalSheets: stat.totalSheets,
+					totalTransactions: stat.totalTransactions,
 					delivered: stat.delivered,
 					cancelled: stat.cancelled,
 					pending: stat.pending,
@@ -250,7 +259,7 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 			formattedStats.push(
 				statsMap.get(formattedDate) || {
 					date: formattedDate,
-					totalSheets: 0,
+					totalTransactions: 0,
 					delivered: 0,
 					cancelled: 0,
 					pending: 0,
@@ -269,8 +278,8 @@ export const getSheetsStats = async (req: Request, res: Response) => {
 	}
 };
 
-// Get a single Sheet by ID
-export const getSheetById = async (req: Request, res: Response) => {
+// Get a single Transaction by ID
+export const getTransactionById = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
 
@@ -278,13 +287,15 @@ export const getSheetById = async (req: Request, res: Response) => {
 			return res.status(400).json({ success: false, message: "Invalid ID format" });
 		}
 
-		const sheet = await Sheet.findById(id)
+		const sheet = await Transaction.findById(id)
 			.populate("createdBy", "firstName lastName email")
-			.populate("ledgerId", "date oldBalance balance sheetCount lastSheet")
+			.populate("ledgerId", "date oldBalance balance sheetCount lastTransaction")
 			.populate("assignedTo", "firstName lastName email");
 
 		if (!sheet) {
-			return res.status(404).json({ success: false, message: "Sheet not found" });
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
 		}
 
 		return res.status(200).json(sheet);
@@ -294,8 +305,8 @@ export const getSheetById = async (req: Request, res: Response) => {
 	}
 };
 
-// Update a Sheet
-export const updateSheet = async (req: Request, res: Response) => {
+// Update a Transaction
+export const updateTransaction = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
 		const { amount, status, assignedTo, payer } = req.body;
@@ -310,24 +321,26 @@ export const updateSheet = async (req: Request, res: Response) => {
 		if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
 		if (payer !== undefined) updateData.payer = payer;
 
-		const updatedSheet = await Sheet.findByIdAndUpdate(id, updateData, {
+		const updatedTransaction = await Transaction.findByIdAndUpdate(id, updateData, {
 			new: true,
 			runValidators: true,
 		});
 
-		if (!updatedSheet) {
-			return res.status(404).json({ success: false, message: "Sheet not found" });
+		if (!updatedTransaction) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
 		}
 
-		return res.status(200).json(updatedSheet);
+		return res.status(200).json(updatedTransaction);
 	} catch (error) {
 		console.error("Error updating sheet:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
 	}
 };
 
-// Update a Sheet
-export const updateStatusSheet = async (req: Request, res: Response) => {
+// Update a Transaction
+export const updateStatusTransaction = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
 		const { status, remarks } = req.body;
@@ -336,25 +349,27 @@ export const updateStatusSheet = async (req: Request, res: Response) => {
 			return res.status(400).json({ success: false, message: "Invalid ID format" });
 		}
 
-		const updatedSheet = await Sheet.findByIdAndUpdate(
+		const updatedTransaction = await Transaction.findByIdAndUpdate(
 			id,
 			{ status },
 			{ new: true, runValidators: true }
 		);
 
-		if (!updatedSheet) {
-			return res.status(404).json({ success: false, message: "Sheet not found" });
+		if (!updatedTransaction) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
 		}
 
-		return res.status(200).json(updatedSheet);
+		return res.status(200).json(updatedTransaction);
 	} catch (error) {
 		console.error("Error updating sheet:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
 	}
 };
 
-// Delete a Sheet
-export const deleteSheet = async (req: Request, res: Response) => {
+// Delete a Transaction
+export const deleteTransaction = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
 
@@ -362,15 +377,32 @@ export const deleteSheet = async (req: Request, res: Response) => {
 			return res.status(400).json({ success: false, message: "Invalid ID format" });
 		}
 
-		const deletedSheet = await Sheet.findByIdAndDelete(id);
+		const deletedTransaction = await Transaction.findByIdAndDelete(id);
 
-		if (!deletedSheet) {
-			return res.status(404).json({ success: false, message: "Sheet not found" });
+		if (!deletedTransaction) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
 		}
 
 		return res.status(200);
 	} catch (error) {
 		console.error("Error deleting sheet:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
+	}
+};
+
+export const createTransactionWithoutRequest = async (
+	data: ITransactionCreateDTO,
+	session: mongoose.ClientSession
+) => {
+	try {
+		const newTransaction = new Transaction({ ...data });
+		await newTransaction.save({ session });
+
+		return newTransaction;
+	} catch (error) {
+		console.error("Error creating transaction:", error);
+		throw error;
 	}
 };

@@ -1,8 +1,8 @@
 import { AxiosRequest } from "@/lib/axios.instance";
 import { ILedger } from "@/types/ledger-types";
-import { LedgerTable } from "./components/ledger-table";
-import { CreateLedgerModal } from "./components/create-ledger-modal";
-import { ShowActiveTodayToggle } from "./components/show-active-today-toggle";
+import { LedgerTable } from "../components/ledger-table";
+import { CreateLedgerModal } from "../components/create-ledger-modal";
+import { ShowActiveTodayToggle } from "../components/show-active-today-toggle";
 
 interface Props {
 	params: { slug: string };
@@ -19,6 +19,7 @@ export default async function Home({ params, searchParams }: Props) {
 
 		// Construct the query parameters dynamically
 		const queryParams = new URLSearchParams();
+		queryParams.append("type", "agent");
 		if (date) queryParams.append("date", date);
 		if (activeToday) queryParams.append("activeToday", activeToday);
 
@@ -42,7 +43,7 @@ export default async function Home({ params, searchParams }: Props) {
 					<CreateLedgerModal />
 				</div>
 			</div>
-			<LedgerTable ledgers={ledgers} errorMessage={errorMessage} showTypeColumns />
+			<LedgerTable ledgers={ledgers} errorMessage={errorMessage} />
 		</div>
 	);
 }

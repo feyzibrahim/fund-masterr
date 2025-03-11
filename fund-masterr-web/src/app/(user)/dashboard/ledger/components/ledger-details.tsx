@@ -1,33 +1,29 @@
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { IFund } from "@/types/fund-types";
 import { ILedger } from "@/types/ledger-types";
-import { ISheet } from "@/types/sheet-types";
+import { ITransaction } from "@/types/transaction-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 type LedgerDetailsProps = {
-	sheets?: ISheet[];
-	funds?: IFund[];
+	transactions?: ITransaction[];
 	ledger?: ILedger;
 };
 
-export function LedgerDetails({ sheets, funds, ledger }: LedgerDetailsProps) {
+export function LedgerDetails({ transactions, ledger }: LedgerDetailsProps) {
 	const calcGrandTotal = () => {
 		let grandTotal = 0;
-		if (ledger && ledger.oldBalance) {
-			grandTotal += ledger.oldBalance;
-		}
 
-		if (sheets) {
-			sheets.forEach((sheet) => {
-				if (sheet.status !== "cancelled") {
-					grandTotal += sheet.amount;
+		if (transactions) {
+			transactions.forEach((transaction) => {
+				if (transaction.status !== "cancelled" && transaction.type === "sheet") {
+					grandTotal += transaction.amount;
 				}
-			});
-		}
-		if (funds) {
-			funds.forEach((fund) => {
-				grandTotal -= fund.amount;
+				if (transaction.status === "cancelled") {
+					grandTotal -= transaction.amount;
+				}
+				if (transaction.type === "fund") {
+					grandTotal -= transaction.amount;
+				}
 			});
 		}
 
@@ -58,36 +54,49 @@ export function LedgerDetails({ sheets, funds, ledger }: LedgerDetailsProps) {
 					<div className="text-right">
 						<p className="text-lg font-semibold">
 							Fund:{" "}
-							{funds &&
+							{transactions &&
 								formatCurrency(
-									funds.length > 0
-										? funds.reduce(
-												(acc, fund) => acc + fund.amount,
-												0
-										  )
+									transactions.length > 0
+										? transactions
+												.filter(
+													(transaction) =>
+														transaction.type === "fund"
+												)
+												.reduce(
+													(acc, fund) => acc + fund.amount,
+													0
+												)
 										: 0
 								)}
 						</p>
-						{ledger && ledger.oldBalance !== undefined ? (
+						{ledger && ledger.balance !== undefined ? (
 							<p className="text-foreground-secondary">
-								Old Balance: {formatCurrency(ledger.oldBalance)}
+								Balance: {formatCurrency(ledger.balance)}
 							</p>
 						) : (
-							<Button>Set Old Balance</Button>
+							<Button>Set Balance</Button>
 						)}
 					</div>
 				</div>
 				<div className="grid grid-cols-3 gap-4 mt-6">
 					<div>
 						<p className="text-foreground-secondary">Sheets Count</p>
-						<p className="text-xl font-semibold">{sheets && sheets.length}</p>
+						<p className="text-xl font-semibold">
+							{transactions &&
+								transactions.filter(
+									(transaction) => transaction.type === "sheet"
+								).length}
+						</p>
 					</div>
 					<div>
 						<p className="text-foreground-secondary">Cancelled Sheets</p>
 						<p className="text-xl font-semibold">
-							{sheets &&
-								sheets.filter((sheet) => sheet.status === "cancelled")
-									.length}
+							{transactions &&
+								transactions.filter(
+									(sheet) =>
+										sheet.status === "cancelled" ||
+										sheet.type === "sheet"
+								).length}
 						</p>
 					</div>
 					<div>
@@ -95,9 +104,9 @@ export function LedgerDetails({ sheets, funds, ledger }: LedgerDetailsProps) {
 							Total Amount Cancelled
 						</p>
 						<p className="text-xl font-semibold">
-							{sheets &&
+							{transactions &&
 								formatCurrency(
-									sheets
+									transactions
 										.filter((sheet) => sheet.status === "cancelled")
 										.reduce((acc, sheet) => acc + sheet.amount, 0)
 								)}
@@ -108,9 +117,13 @@ export function LedgerDetails({ sheets, funds, ledger }: LedgerDetailsProps) {
 					<div>
 						<p className="text-foreground-secondary">Sheets Total</p>
 						<p className="text-xl font-bold">
-							{sheets &&
+							{transactions &&
 								formatCurrency(
-									sheets.reduce((acc, sheet) => acc + sheet.amount, 0)
+									transactions
+										.filter(
+											(transaction) => transaction.type === "sheet"
+										)
+										.reduce((acc, sheet) => acc + sheet.amount, 0)
 								)}
 						</p>
 					</div>

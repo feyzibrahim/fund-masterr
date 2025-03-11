@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export async function updateSheet(formData: FormData, sheetId: string) {
 	try {
-		await AxiosRequest.patch(`/sheet/update-status/${sheetId}`, formData);
+		await AxiosRequest.patch(`/transaction/update-status/${sheetId}`, formData);
 		revalidatePath(`/dashboard/sheets`);
 		return { success: true };
 	} catch (error: any) {

@@ -7,9 +7,8 @@ import morgan from "morgan";
 import { requireAuth } from "./middleware/requireAuth";
 import authRouter from "./routes/auth.router";
 import contactRouter from "./routes/contact.router";
-import fundRouter from "./routes/fund.router";
 import ledgerRouter from "./routes/ledger.router";
-import sheetRouter from "./routes/sheet.router";
+import transactionRouter from "./routes/transaction.router";
 import userRouter from "./routes/user.router";
 import notificationRouter from "./routes/notification.router";
 
@@ -38,9 +37,8 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/contact", requireAuth, contactRouter);
 app.use("/api/ledger", requireAuth, ledgerRouter);
-app.use("/api/sheet", requireAuth, sheetRouter);
+app.use("/api/transaction", requireAuth, transactionRouter);
 app.use("/api/user", requireAuth, userRouter);
-app.use("/api/fund", requireAuth, fundRouter);
 app.use("/api/notification", requireAuth, notificationRouter);
 
 // Public Api for accessing images

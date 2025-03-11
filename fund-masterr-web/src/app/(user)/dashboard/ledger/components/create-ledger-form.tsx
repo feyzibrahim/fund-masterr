@@ -33,7 +33,7 @@ import { createNewLedger } from "./action";
 // Define the Zod schema for validation
 const ledgerSchema = z.object({
 	contact: z.string().min(1, "Select a contact"),
-	oldBalance: z.number().min(0, "Old balance must be a positive number"),
+	balance: z.number().min(0, "Old balance must be a positive number"),
 	fund: z.number().min(0, "Old balance must be a positive number"),
 });
 
@@ -66,7 +66,7 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 		resolver: zodResolver(ledgerSchema),
 		defaultValues: {
 			contact: "",
-			oldBalance: 0,
+			balance: 0,
 			fund: 0,
 		},
 	});
@@ -176,14 +176,14 @@ export function CreateLedgerForm({ setIsOpen }: Props) {
 
 				{/* Old Balance Field */}
 				<FormField
-					name="oldBalance"
+					name="balance"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Old Balance</FormLabel>
+							<FormLabel>Balance</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
-									placeholder="Enter old balance"
+									placeholder="Enter balance"
 									{...field}
 									value={field.value} // Keep the field value synced
 									onChange={

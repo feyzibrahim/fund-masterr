@@ -7,10 +7,10 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { IFund } from "@/types/fund-types";
+import { ITransaction } from "@/types/transaction-types";
 
 type FundsTableProps = {
-	funds?: IFund[];
+	funds?: ITransaction[];
 	errorMessage?: string;
 };
 

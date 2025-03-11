@@ -1,45 +1,31 @@
-import { DailySheets } from "../components/daily-sheets";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LedgerDetails } from "../components/ledger-details";
+import { TransactionsList } from "@/components/transactions-list";
 import { AddFundModal } from "../components/add-fund-modal";
 import { CreateSheetModal } from "../components/create-sheet-modal";
-import { getFunds, getLedger, getSheets } from "./action";
-import { FundsTable } from "../components/funds-table";
+import { LedgerDetails } from "../components/ledger-details";
+import { getLedger, getTransactions } from "./action";
 
 interface Props {
 	params: { id: string };
 }
 
-export default async function UserSheetsPage({ params }: Props) {
-	let { sheets, error: sheetsError } = await getSheets(params.id);
-	let { funds, error: fundsError } = await getFunds(params.id);
+export default async function LedgerDetailPage({ params }: Props) {
+	let { transactions, error: transactionsError } = await getTransactions(params.id);
 	let { ledger } = await getLedger(params.id);
 
 	return (
 		<div className="space-y-5">
-			<LedgerDetails sheets={sheets} funds={funds} ledger={ledger} />
-			<Tabs defaultValue="sheets" className="w-">
-				<div className="flex items-center justify-between">
-					<TabsList className="flex w-fit">
-						<TabsTrigger value="sheets">Sheets</TabsTrigger>
-						<TabsTrigger value="fund-history">Fund History</TabsTrigger>
-					</TabsList>
-					<div className="space-x-2">
-						<AddFundModal />
-						<CreateSheetModal ledger={ledger} />
-					</div>
-				</div>
-				<TabsContent value="sheets">
-					<DailySheets
-						sheets={sheets}
-						errorMessage={sheetsError}
-						ledger={ledger}
-					/>
-				</TabsContent>
-				<TabsContent value="fund-history">
-					<FundsTable funds={funds} errorMessage={fundsError} />
-				</TabsContent>
-			</Tabs>
+			<LedgerDetails transactions={transactions} ledger={ledger} />
+
+			<div className="w-full flex items-center gap-5">
+				<AddFundModal />
+				<CreateSheetModal ledger={ledger} />
+			</div>
+
+			<TransactionsList
+				transactions={transactions}
+				errorMessage={transactionsError}
+				ledger={ledger}
+			/>
 		</div>
 	);
 }

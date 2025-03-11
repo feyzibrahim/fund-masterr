@@ -8,10 +8,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { FilePlus } from "lucide-react";
+import { ILedger } from "@/types/ledger-types";
+import { Layers2 } from "lucide-react";
 import { useState } from "react";
 import { CreateSheetForm } from "./create-sheet-form";
-import { ILedger } from "@/types/ledger-types";
 
 interface Props {
 	ledger?: ILedger;
@@ -23,8 +23,9 @@ export function CreateSheetModal({ ledger }: Props) {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen} modal>
 			<DialogTrigger asChild>
-				<Button size="icon" variant="ghost">
-					<FilePlus className="w-4 h-4" />
+				<Button variant="outline" className="flex items-center gap-2">
+					<Layers2 className="w-4 h-4" />
+					Add Sheet
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">

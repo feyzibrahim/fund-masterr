@@ -1,4 +1,4 @@
-import { BookOpen, Contact2, Layers2, Settings2 } from "lucide-react";
+import { BookOpen, BookText, Contact2, Layers2, Settings2 } from "lucide-react";
 
 export const redirectUrls = [
 	{
@@ -24,8 +24,8 @@ export const sidebarContent = [
 		content: [
 			{
 				title: "Ledger",
-				url: "#",
-				icon: Layers2,
+				url: "/dashboard/ledger",
+				icon: BookText,
 				isActive: true,
 				items: [
 					{
@@ -33,20 +33,43 @@ export const sidebarContent = [
 						url: "/dashboard/ledger",
 					},
 					{
-						title: "Sheets",
-						url: "/dashboard/ledger/sheets",
+						title: "Payers",
+						url: "/dashboard/ledger/payer",
+					},
+					{
+						title: "Agents",
+						url: "/dashboard/ledger/agent",
+					},
+				],
+			},
+			{
+				title: "Sheets",
+				url: "/dashboard/sheets",
+				icon: Layers2,
+				isActive: true,
+				items: [
+					{
+						title: "All",
+						url: "/dashboard/sheets",
+					},
+					{
+						title: "Delivered",
+						url: "/dashboard/sheets/delivered",
+					},
+					{
+						title: "Pending",
+						url: "/dashboard/sheets/pending",
 					},
 					{
 						title: "Cancelled",
-						url: "/dashboard/ledger/cancelled",
+						url: "/dashboard/sheets/cancelled",
 					},
 				],
 			},
 			{
 				title: "Contacts",
-				url: "#",
+				url: "/dashboard/contacts",
 				icon: Contact2,
-				isActive: true,
 				items: [
 					{
 						title: "All",
@@ -68,7 +91,7 @@ export const sidebarContent = [
 			},
 			{
 				title: "Documentation",
-				url: "#",
+				url: "/dashboard/docs",
 				icon: BookOpen,
 				items: [
 					{
@@ -91,7 +114,7 @@ export const sidebarContent = [
 			},
 			{
 				title: "Settings",
-				url: "",
+				url: "/dashboard/settings",
 				icon: Settings2,
 				items: [
 					{
@@ -119,7 +142,7 @@ export const sidebarContent = [
 		content: [
 			{
 				title: "Sheets",
-				url: "",
+				url: "/dashboard/sheets",
 				icon: Layers2,
 				isActive: true,
 				items: [
@@ -127,11 +150,23 @@ export const sidebarContent = [
 						title: "All",
 						url: "/dashboard/sheets",
 					},
+					{
+						title: "Delivered",
+						url: "/dashboard/sheets/delivered",
+					},
+					{
+						title: "Pending",
+						url: "/dashboard/sheets/pending",
+					},
+					{
+						title: "Cancelled",
+						url: "/dashboard/sheets/cancelled",
+					},
 				],
 			},
 			{
 				title: "Settings",
-				url: "",
+				url: "/dashboard/settings",
 				icon: Settings2,
 				items: [
 					{

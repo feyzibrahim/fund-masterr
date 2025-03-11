@@ -11,13 +11,13 @@ interface Props {
 function sumStats(stats: IStats[]) {
 	return stats.reduce(
 		(acc, stat) => {
-			acc.totalSheets += stat.totalSheets;
+			acc.totalTransactions += stat.totalTransactions;
 			acc.delivered += stat.delivered;
 			acc.cancelled += stat.cancelled;
 			acc.totalAmountDelivered += stat.totalAmountDelivered;
 			return acc;
 		},
-		{ totalSheets: 0, delivered: 0, cancelled: 0, totalAmountDelivered: 0 }
+		{ totalTransactions: 0, delivered: 0, cancelled: 0, totalAmountDelivered: 0 }
 	);
 }
 
@@ -28,7 +28,7 @@ export default async function Dashboard({ params, searchParams }: Props) {
 	try {
 		const date = searchParams?.date;
 		stats = await AxiosRequest.get<IStats[]>(
-			`/sheet/stats${date ? `?date=${date}` : ""}`
+			`/transaction/stats${date ? `?date=${date}` : ""}`
 		);
 	} catch (error: any) {
 		errorMessage = error.message ?? "An error occurred while fetching sheets.";
@@ -50,7 +50,7 @@ export default async function Dashboard({ params, searchParams }: Props) {
 				<div className="rounded-xl bg-muted/50 p-5 space-y-3">
 					<div className="flex items-center gap-4">
 						<Layers2 className="w-12 h-12" />
-						<h1 className="text-4xl font-bold">{totals.totalSheets}</h1>
+						<h1 className="text-4xl font-bold">{totals.totalTransactions}</h1>
 					</div>
 					<p className="text-lg text-foreground-secondary">Total Sheets</p>
 				</div>

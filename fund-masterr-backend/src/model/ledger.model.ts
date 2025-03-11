@@ -4,8 +4,8 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ILedger extends Document {
 	contact: mongoose.Types.ObjectId[]; // References to User model
 	createdBy: mongoose.Types.ObjectId; // Reference to User model
-	activeToday: boolean;
-	oldBalance?: number;
+	balance: number;
+	lastUpdated: Date;
 }
 
 // Define the schema for the Ledger model
@@ -21,14 +21,13 @@ const LedgerSchema: Schema = new Schema(
 			ref: "User",
 			required: true,
 		},
-		oldBalance: {
+		balance: {
 			type: Number,
 			default: 0,
-			min: 0,
 		},
-		activeToday: {
-			type: Boolean,
-			default: false,
+		lastUpdated: {
+			type: Date,
+			default: Date.now,
 		},
 	},
 	{

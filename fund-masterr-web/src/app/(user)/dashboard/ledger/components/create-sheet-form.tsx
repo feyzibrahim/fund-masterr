@@ -47,7 +47,6 @@ interface Props {
 }
 
 export function CreateSheetForm({ setIsOpen, ledger }: Props) {
-	console.log("🚀 ~ create-sheet-form.tsx:50 ~ CreateSheetForm ~ ledger:", ledger);
 	const defaultContactType = ledger.contact.type === "agent" ? "payer" : "agent";
 	const [contacts, setContacts] = useState<IContact[]>([]);
 	let [errorMessage, setErrorMessage] = useState("");

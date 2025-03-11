@@ -8,19 +8,19 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { getSession } from "@/lib/auth-utils";
-import { getLedgerListUser } from "@/lib/get-ledger-list-user";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { ILedger } from "@/types/ledger-types";
-import { ChevronRight, TrashIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {
 	ledgers: ILedger[];
 	errorMessage: string;
+	showTypeColumns?: boolean;
 }
 
-export async function LedgerTable({ ledgers, errorMessage }: Props) {
+export async function LedgerTable({ ledgers, errorMessage, showTypeColumns }: Props) {
 	const session = await getSession();
 	if (!session) {
 		notFound();
@@ -34,8 +34,8 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 				<TableRow>
 					<TableHead>Name</TableHead>
 					<TableHead>Phone</TableHead>
-					<TableHead>Type</TableHead>
-					<TableHead>Old Balance</TableHead>
+					{showTypeColumns && <TableHead>Type</TableHead>}
+					<TableHead>Balance</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -64,12 +64,12 @@ export async function LedgerTable({ ledgers, errorMessage }: Props) {
 								</Link>
 							</TableCell>
 							<TableCell>{ledger.contact.phone}</TableCell>
-							<TableCell className="capitalize">
-								{ledger.contact.type}
-							</TableCell>
-							<TableCell>
-								{ledger.oldBalance && formatCurrency(ledger.oldBalance)}
-							</TableCell>
+							{showTypeColumns && (
+								<TableCell className="capitalize">
+									{ledger.contact.type}
+								</TableCell>
+							)}
+							<TableCell>{formatCurrency(ledger.balance)}</TableCell>
 							<TableCell className="p-0">
 								<Link href={`/dashboard/ledger/${ledger._id}`}>
 									<Button size="icon" variant="outline">

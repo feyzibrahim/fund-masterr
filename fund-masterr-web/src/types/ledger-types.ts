@@ -6,7 +6,7 @@ export interface ILedger {
 	contact: IContact;
 	createdBy: IUser;
 	activeToday: boolean;
-	oldBalance?: number;
+	balance: number;
 	createdAt?: string;
 	updatedAt?: string;
 }

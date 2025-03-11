@@ -18,8 +18,9 @@ export function AddFundModal() {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen} modal>
 			<DialogTrigger asChild>
-				<Button size="icon" variant="ghost">
+				<Button variant="outline" className="flex items-center gap-2">
 					<IndianRupee className="w-4 h-4" />
+					Add Fund
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">

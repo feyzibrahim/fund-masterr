@@ -13,8 +13,8 @@ import {
 import { IStats } from "@/types/stats-types";
 
 const chartConfig = {
-	totalSheets: {
-		label: "Total Sheets",
+	totalTransactions: {
+		label: "Total Transactions",
 		color: "#294dff",
 	},
 	delivered: {
@@ -38,7 +38,7 @@ interface Props {
 export function DashboardChart({ stats }: Props) {
 	const chartData = stats.map((stat) => ({
 		label: stat.date,
-		totalSheets: stat.totalSheets,
+		totalTransactions: stat.totalTransactions,
 		delivered: stat.delivered,
 		cancelled: stat.cancelled,
 		pending: stat.pending,
@@ -57,7 +57,11 @@ export function DashboardChart({ stats }: Props) {
 				<ChartTooltip content={<ChartTooltipContent />} />
 				<ChartLegend content={<ChartLegendContent />} />
 
-				<Bar dataKey="totalSheets" fill="var(--color-totalSheets)" radius={4} />
+				<Bar
+					dataKey="totalTransactions"
+					fill="var(--color-totalTransactions)"
+					radius={4}
+				/>
 				<Bar dataKey="delivered" fill="var(--color-delivered)" radius={4} />
 				<Bar dataKey="cancelled" fill="var(--color-cancelled)" radius={4} />
 				<Bar dataKey="pending" fill="var(--color-pending)" radius={4} />
