@@ -177,6 +177,7 @@ export const getTransactionsStats = async (req: Request, res: Response) => {
 		}
 
 		const query: any = {};
+		query.type = "sheet";
 
 		if (user.role === "payer") {
 			query.createdBy = new mongoose.Types.ObjectId(userId);
