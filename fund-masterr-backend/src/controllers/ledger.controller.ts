@@ -21,7 +21,7 @@ export const createLedger = async (req: Request, res: Response) => {
 			await session.abortTransaction();
 			session.endSession();
 			return res.status(400).json({
-				message: `A ledger already exists for this contact today.`,
+				message: `A ledger already exists for this contact.`,
 			});
 		}
 
@@ -66,13 +66,6 @@ export const getAllLedgers = async (req: Request, res: Response) => {
 
 	try {
 		const query: any = {};
-
-		// Check if a date is passed in the query
-		const { start, end } = getStartAndEndDate(req, res);
-
-		if (start && end) {
-			query.createdAt = { $gte: start, $lte: end };
-		}
 
 		if (userId) {
 			query.createdBy = userId;

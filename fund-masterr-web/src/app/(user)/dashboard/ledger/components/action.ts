@@ -38,7 +38,7 @@ export async function createNewSheet(formData: SheetFormValues, ledgerId: string
 
 export async function createNewFund(formData: FundFormValues, ledgerId: string) {
 	try {
-		await AxiosRequest.post("/fund", { ...formData });
+		await AxiosRequest.post("/transaction/fund", { ...formData });
 		revalidatePath(`/dashboard/transaction/fund/${ledgerId}`);
 		return { success: true };
 	} catch (error: any) {

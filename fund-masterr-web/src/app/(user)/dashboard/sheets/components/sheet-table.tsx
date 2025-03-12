@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ITransaction } from "@/types/transaction-types";
-import { UpdateSheetModal } from "./update-sheet-modal";
-import { CheckCircle, CopyX, Timer } from "lucide-react";
 import SheetStatus from "./sheet-status";
+import { UpdateContactList } from "./update-agent-list";
+import { UpdateSheetModal } from "./update-sheet-modal";
 
 type SheetTableProps = {
 	transactions?: ITransaction[];
@@ -49,12 +49,18 @@ export function SheetTable({ transactions, errorMessage }: SheetTableProps) {
 						<TableRow key={transaction._id}>
 							<TableCell>{formatCurrency(transaction.amount)}</TableCell>
 							<TableCell>{formatDate(transaction.createdAt)}</TableCell>
-							<TableCell>{`${transaction.agent?.firstName ?? ""} ${
-								transaction.agent?.lastName ?? ""
-							}`}</TableCell>
-							<TableCell>{`${transaction.payer?.firstName ?? ""} ${
-								transaction.payer?.lastName ?? ""
-							}`}</TableCell>
+							<TableCell>
+								<UpdateContactList
+									transaction={transaction}
+									type="agent"
+								/>
+							</TableCell>
+							<TableCell>
+								<UpdateContactList
+									transaction={transaction}
+									type="payer"
+								/>
+							</TableCell>
 							<TableCell>
 								<SheetStatus status={transaction.status} />
 							</TableCell>

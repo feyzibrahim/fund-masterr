@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { ITransactionCreateDTO } from "../dto/transaction.dto";
+import Contact from "../model/contact.model";
 import Ledger from "../model/ledger.model";
-import Transaction, { ITransaction } from "../model/transaction.model";
+import Transaction from "../model/transaction.model";
+import User from "../model/user.model";
 import { getStartAndEndDate } from "../util/get-start-and-end-date";
 import { getUserIdFromRequest } from "../util/get-user-from-request";
-import User from "../model/user.model";
-import Contact from "../model/contact.model";
-import { ITransactionCreateDTO } from "../dto/transaction.dto";
 
 // Create a new Transaction with a transaction and update ledger balances
 export const createTransaction = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export const createTransaction = async (req: Request, res: Response) => {
 	session.startTransaction(); // Begin the transaction
 
 	try {
-		const { id, amount, status, ledgerId, agent, payer } = req.body;
+		const { id, amount, ledgerId, agent, payer } = req.body;
 
 		let ledgerIds = [ledgerId];
 
@@ -27,13 +27,91 @@ export const createTransaction = async (req: Request, res: Response) => {
 		);
 
 		const updateLedger = async (contact: string) => {
-			const { start, end } = getStartAndEndDate(req, res);
-
 			const existingLedger = await Ledger.findOne(
 				{
 					contact: contact,
 					createdBy: userId,
-					createdAt: { $gte: start, $lte: end },
+				},
+				null,
+				{ session } // Use the session
+			);
+
+			if (existingLedger) {
+				if (!ledgerIds.find((le) => le === existingLedger._id)) {
+					ledgerIds.push(existingLedger._id);
+				}
+				existingLedger.lastUpdated = new Date();
+				existingLedger.balance -= amount;
+				await existingLedger.save({ session });
+			} else {
+				const newLedger = new Ledger({
+					contact: contact,
+					createdBy: userId,
+					balance: -amount,
+				});
+				const savedLedger = await newLedger.save({ session }); // Save within the transaction
+
+				if (!ledgerIds.find((le) => le === savedLedger._id)) {
+					ledgerIds.push(savedLedger._id);
+				}
+			}
+		};
+
+		// If agent is provided, check for an existing ledger or create one
+		if (agent) {
+			await updateLedger(agent);
+		}
+
+		if (payer) {
+			await updateLedger(payer);
+		}
+
+		const newTransaction = new Transaction({
+			id,
+			amount,
+			createdBy: userId,
+			ledgerIds: ledgerIds,
+			agent: agent || null,
+			payer: payer || null,
+		});
+
+		await newTransaction.save({ session }); // Save within the transaction
+
+		await session.commitTransaction(); // Commit the transaction
+		session.endSession();
+
+		return res.status(201).json(newTransaction);
+	} catch (error) {
+		await session.abortTransaction(); // Rollback the transaction on error
+		session.endSession();
+
+		console.error("Error creating sheet:", error);
+		return res.status(500).json({ success: false, message: "Server error", error });
+	}
+};
+
+export const addFundToLedger = async (req: Request, res: Response) => {
+	const userId = await getUserIdFromRequest(req);
+
+	const session = await mongoose.startSession(); // Start a session
+	session.startTransaction(); // Begin the transaction
+
+	try {
+		const { id, amount, ledgerId, agent, payer } = req.body;
+
+		let ledgerIds = [ledgerId];
+
+		await Ledger.updateOne(
+			{ _id: ledgerId },
+			{ $set: { lastUpdated: Date.now() } },
+			{ session } // Ensure this update is part of the transaction
+		);
+
+		const updateLedger = async (contact: string) => {
+			const existingLedger = await Ledger.findOne(
+				{
+					contact: contact,
+					createdBy: userId,
 				},
 				null,
 				{ session } // Use the session
@@ -42,7 +120,7 @@ export const createTransaction = async (req: Request, res: Response) => {
 			if (existingLedger) {
 				ledgerIds.push(existingLedger._id);
 				existingLedger.lastUpdated = new Date();
-				existingLedger.balance -= amount;
+				existingLedger.balance += amount;
 				await existingLedger.save({ session });
 			} else {
 				const newLedger = new Ledger({
@@ -67,9 +145,10 @@ export const createTransaction = async (req: Request, res: Response) => {
 		const newTransaction = new Transaction({
 			id,
 			amount,
-			status,
+			status: "none",
 			createdBy: userId,
 			ledgerIds: ledgerIds,
+			type: "fund",
 			agent: agent || null,
 			payer: payer || null,
 		});
@@ -310,7 +389,7 @@ export const getTransactionById = async (req: Request, res: Response) => {
 export const updateTransaction = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		const { amount, status, assignedTo, payer } = req.body;
+		const { amount, status, agent, payer } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(id)) {
 			return res.status(400).json({ success: false, message: "Invalid ID format" });
@@ -319,7 +398,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
 		const updateData: any = {};
 		if (amount !== undefined) updateData.amount = amount;
 		if (status !== undefined) updateData.status = status;
-		if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+		if (agent !== undefined) updateData.agent = agent;
 		if (payer !== undefined) updateData.payer = payer;
 
 		const updatedTransaction = await Transaction.findByIdAndUpdate(id, updateData, {
@@ -352,7 +431,7 @@ export const updateStatusTransaction = async (req: Request, res: Response) => {
 
 		const updatedTransaction = await Transaction.findByIdAndUpdate(
 			id,
-			{ status },
+			{ status, remarks },
 			{ new: true, runValidators: true }
 		);
 
@@ -366,6 +445,160 @@ export const updateStatusTransaction = async (req: Request, res: Response) => {
 	} catch (error) {
 		console.error("Error updating sheet:", error);
 		return res.status(500).json({ success: false, message: "Server error", error });
+	}
+};
+
+export const updateAgentOfTransaction = async (req: Request, res: Response) => {
+	const userId = await getUserIdFromRequest(req);
+	const session = await mongoose.startSession();
+
+	try {
+		session.startTransaction();
+
+		const { id } = req.params;
+		const { agent } = req.body;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			await session.abortTransaction();
+			return res.status(400).json({ success: false, message: "Invalid ID format" });
+		}
+
+		const updatedTransaction = await Transaction.findByIdAndUpdate(
+			id,
+			{ agent },
+			{ new: true, runValidators: true, session }
+		);
+
+		if (!updatedTransaction) {
+			await session.abortTransaction();
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
+		}
+
+		if (agent) {
+			let ledgerId: mongoose.Types.ObjectId | undefined;
+
+			const existingLedger = await Ledger.findOne(
+				{
+					contact: agent,
+					createdBy: userId,
+				},
+				null,
+				{ session }
+			);
+
+			if (existingLedger) {
+				existingLedger.lastUpdated = new Date();
+				existingLedger.balance -= updatedTransaction.amount;
+				await existingLedger.save({ session });
+				ledgerId = existingLedger._id as mongoose.Types.ObjectId;
+			} else {
+				const newLedger = new Ledger({
+					contact: agent,
+					createdBy: userId,
+					balance: -updatedTransaction.amount,
+				});
+				const savedLedger = (await newLedger.save({
+					session,
+				})) as typeof newLedger & { _id: mongoose.Types.ObjectId };
+				ledgerId = savedLedger._id;
+			}
+
+			if (
+				ledgerId &&
+				!updatedTransaction.ledgerIds.some((id) => id.equals(ledgerId))
+			) {
+				updatedTransaction.ledgerIds.push(ledgerId);
+				await updatedTransaction.save({ session });
+			}
+		}
+
+		await session.commitTransaction();
+		return res.status(200).json(updatedTransaction);
+	} catch (error) {
+		await session.abortTransaction();
+		console.error("Error updating transaction:", error);
+		return res.status(500).json({ success: false, message: "Server error", error });
+	} finally {
+		session.endSession();
+	}
+};
+
+export const updatePayerOfTransaction = async (req: Request, res: Response) => {
+	const userId = await getUserIdFromRequest(req);
+	const session = await mongoose.startSession();
+
+	try {
+		session.startTransaction();
+
+		const { id } = req.params;
+		const { payer } = req.body;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			await session.abortTransaction();
+			return res.status(400).json({ success: false, message: "Invalid ID format" });
+		}
+
+		const updatedTransaction = await Transaction.findByIdAndUpdate(
+			id,
+			{ payer },
+			{ new: true, runValidators: true, session }
+		);
+
+		if (!updatedTransaction) {
+			await session.abortTransaction();
+			return res
+				.status(404)
+				.json({ success: false, message: "Transaction not found" });
+		}
+
+		if (payer) {
+			let ledgerId: mongoose.Types.ObjectId | undefined;
+
+			const existingLedger = await Ledger.findOne(
+				{
+					contact: payer,
+					createdBy: userId,
+				},
+				null,
+				{ session }
+			);
+
+			if (existingLedger) {
+				existingLedger.lastUpdated = new Date();
+				existingLedger.balance -= updatedTransaction.amount;
+				await existingLedger.save({ session });
+				ledgerId = existingLedger._id as mongoose.Types.ObjectId;
+			} else {
+				const newLedger = new Ledger({
+					contact: payer,
+					createdBy: userId,
+					balance: -updatedTransaction.amount,
+				});
+				const savedLedger = (await newLedger.save({
+					session,
+				})) as typeof newLedger & { _id: mongoose.Types.ObjectId };
+				ledgerId = savedLedger._id;
+			}
+
+			if (
+				ledgerId &&
+				!updatedTransaction.ledgerIds.some((id) => id.equals(ledgerId))
+			) {
+				updatedTransaction.ledgerIds.push(ledgerId);
+				await updatedTransaction.save({ session });
+			}
+		}
+
+		await session.commitTransaction();
+		return res.status(200).json(updatedTransaction);
+	} catch (error) {
+		await session.abortTransaction();
+		console.error("Error updating transaction:", error);
+		return res.status(500).json({ success: false, message: "Server error", error });
+	} finally {
+		session.endSession();
 	}
 };
 

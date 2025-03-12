@@ -11,8 +11,13 @@ import {
 import { IndianRupee } from "lucide-react";
 import { useState } from "react";
 import { AddFundForm } from "./add-fund-form";
+import { ILedger } from "@/types/ledger-types";
 
-export function AddFundModal() {
+interface Props {
+	ledger?: ILedger;
+}
+
+export function AddFundModal({ ledger }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -27,7 +32,7 @@ export function AddFundModal() {
 				<DialogHeader>
 					<DialogTitle>Add Fund</DialogTitle>
 				</DialogHeader>
-				<AddFundForm setIsOpen={setIsOpen} />
+				{ledger && <AddFundForm setIsOpen={setIsOpen} ledger={ledger} />}
 			</DialogContent>
 		</Dialog>
 	);

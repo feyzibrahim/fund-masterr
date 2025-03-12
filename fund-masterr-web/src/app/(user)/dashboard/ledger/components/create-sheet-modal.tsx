@@ -30,7 +30,7 @@ export function CreateSheetModal({ ledger }: Props) {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Add Sheets</DialogTitle>
+					<DialogTitle>Add Sheet</DialogTitle>
 				</DialogHeader>
 				{ledger && <CreateSheetForm setIsOpen={setIsOpen} ledger={ledger} />}
 			</DialogContent>

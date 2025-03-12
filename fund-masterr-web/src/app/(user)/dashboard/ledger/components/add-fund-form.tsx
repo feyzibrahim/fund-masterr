@@ -16,9 +16,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createNewFund } from "./action";
+import { ILedger } from "@/types/ledger-types";
 
 // Define the Zod schema for validation
 const ledgerSchema = z.object({
+	agent: z.string().optional(),
+	payer: z.string().optional(),
 	amount: z.number().min(0, "Amount is required"),
 	ledgerId: z.string(),
 });
@@ -27,24 +30,26 @@ export type FundFormValues = z.infer<typeof ledgerSchema>;
 
 interface Props {
 	setIsOpen: (val: boolean) => void;
+	ledger: ILedger;
 }
 
-export function AddFundForm({ setIsOpen }: Props) {
+export function AddFundForm({ setIsOpen, ledger }: Props) {
 	const params = useParams();
-	const ledgerId = params.id as string;
 
 	let [errorMessage, setErrorMessage] = useState("");
 
 	const form = useForm<FundFormValues>({
 		resolver: zodResolver(ledgerSchema),
 		defaultValues: {
+			agent: ledger.contact.type === "agent" ? ledger.contact._id : "",
+			payer: ledger.contact.type === "payer" ? ledger.contact._id : "",
 			amount: 0,
-			ledgerId: ledgerId,
+			ledgerId: ledger._id,
 		},
 	});
 
 	const onSubmit = async (data: FundFormValues) => {
-		const res = await createNewFund(data, ledgerId);
+		const res = await createNewFund(data, ledger._id);
 		if (res.success) {
 			form.reset();
 			setIsOpen(false);

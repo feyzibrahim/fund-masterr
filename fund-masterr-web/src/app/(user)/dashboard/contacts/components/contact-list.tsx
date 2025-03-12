@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
 	Table,
@@ -8,24 +7,15 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { AxiosRequest } from "@/lib/axios.instance";
-import { IContact } from "@/types/contact-types";
+import Link from "next/link";
+import { getContacts } from "../action";
 
 interface Props {
 	type?: "agent" | "payer" | "archive";
 }
 
 export async function ContactList({ type }: Props) {
-	let contacts: IContact[] = [];
-	let errorMessage = "";
-
-	try {
-		contacts = await AxiosRequest.get<IContact[]>(
-			`/contact${type ? `?type=${type}` : ""}`
-		);
-	} catch (error: any) {
-		errorMessage = error.message ?? "An error occurred while fetching contacts.";
-	}
+	const { contacts, error } = await getContacts(type);
 
 	return (
 		<Table>
@@ -38,19 +28,20 @@ export async function ContactList({ type }: Props) {
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{errorMessage ? (
+				{error ? (
 					<TableRow>
 						<TableCell colSpan={4} className="text-center text-red-500">
-							{errorMessage}
+							{error}
 						</TableCell>
 					</TableRow>
-				) : contacts.length === 0 ? (
+				) : contacts && contacts.length === 0 ? (
 					<TableRow>
 						<TableCell colSpan={4} className="text-center">
 							No {type}s are added. Please add a new one.
 						</TableCell>
 					</TableRow>
 				) : (
+					contacts &&
 					contacts.map((contact) => (
 						<TableRow key={contact._id}>
 							<TableCell>

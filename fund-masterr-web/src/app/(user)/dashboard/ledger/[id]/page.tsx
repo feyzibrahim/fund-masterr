@@ -17,7 +17,7 @@ export default async function LedgerDetailPage({ params }: Props) {
 			<LedgerDetails transactions={transactions} ledger={ledger} />
 
 			<div className="w-full flex items-center gap-5">
-				<AddFundModal />
+				<AddFundModal ledger={ledger} />
 				<CreateSheetModal ledger={ledger} />
 			</div>
 

@@ -12,6 +12,7 @@ export interface ITransaction extends Document {
 	ledgerIds: mongoose.Types.ObjectId[]; // Reference to Ledger
 	agent: mongoose.Types.ObjectId; // Reference to User
 	payer: mongoose.Types.ObjectId; // Reference to User
+	remarks: string;
 }
 
 // Define the schema for the Transaction model
@@ -72,6 +73,9 @@ const TransactionSchema: Schema = new Schema(
 		payer: {
 			type: Schema.Types.ObjectId,
 			ref: "Contact",
+		},
+		remarks: {
+			type: String,
 		},
 	},
 	{
