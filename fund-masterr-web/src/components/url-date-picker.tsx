@@ -17,11 +17,6 @@ import { useState, useEffect, Suspense } from "react";
 function URLDatePickerReal() {
 	const router = useRouter();
 	const pathname = usePathname();
-	const isLedgerDetailPage =
-		pathname.split("/").length > 3 &&
-		pathname.split("/")[2] === "ledger" &&
-		pathname.split("/")[3] !== "sheets" &&
-		pathname.split("/")[3] !== "cancelled";
 
 	const searchParams = useSearchParams(); // initialize useSearchParams
 	const [date, setDate] = useState<Date | undefined>(() => {
@@ -33,18 +28,16 @@ function URLDatePickerReal() {
 
 	// Set the initial date from the query parameter when the component mounts
 	useEffect(() => {
-		if (!isLedgerDetailPage) {
-			const dateParam = searchParams.get("date");
-			if (dateParam) {
-				const urlDate = new Date(dateParam);
-				if (!isNaN(urlDate.getTime())) {
-					setDate(urlDate);
-				}
-			} else {
-				setDate(new Date());
+		const dateParam = searchParams.get("date");
+		if (dateParam) {
+			const urlDate = new Date(dateParam);
+			if (!isNaN(urlDate.getTime())) {
+				setDate(urlDate);
 			}
+		} else {
+			setDate(new Date());
 		}
-	}, [searchParams, isLedgerDetailPage]);
+	}, [searchParams]);
 
 	const handleDateSelect = (selectedDate: Date | undefined) => {
 		if (selectedDate) {
@@ -55,7 +48,7 @@ function URLDatePickerReal() {
 			const currentUrl = new URL(window.location.href);
 			const searchParams = new URLSearchParams(currentUrl.search);
 
-			if (formattedDate === today || isLedgerDetailPage) {
+			if (formattedDate === today) {
 				searchParams.delete("date"); // Remove the 'date' parameter if it's today
 			} else {
 				searchParams.set("date", formattedDate); // Add/update the 'date' parameter

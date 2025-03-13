@@ -15,17 +15,24 @@ import { UpdateSheetModal } from "./update-sheet-modal";
 type SheetTableProps = {
 	transactions?: ITransaction[];
 	errorMessage?: string;
+	showPayer?: boolean;
+	showAgent?: boolean;
 };
 
-export function SheetTable({ transactions, errorMessage }: SheetTableProps) {
+export function SheetTable({
+	transactions,
+	errorMessage,
+	showAgent,
+	showPayer,
+}: SheetTableProps) {
 	return (
 		<Table>
 			<TableHeader>
 				<TableRow>
 					<TableHead>Amount</TableHead>
 					<TableHead>Time</TableHead>
-					<TableHead>Agent</TableHead>
-					<TableHead>Payer</TableHead>
+					{showAgent && <TableHead>Agent</TableHead>}
+					{showAgent && <TableHead>Payer</TableHead>}
 					<TableHead>Status</TableHead>
 					<TableHead>Action</TableHead>
 				</TableRow>
@@ -49,18 +56,22 @@ export function SheetTable({ transactions, errorMessage }: SheetTableProps) {
 						<TableRow key={transaction._id}>
 							<TableCell>{formatCurrency(transaction.amount)}</TableCell>
 							<TableCell>{formatDate(transaction.createdAt)}</TableCell>
-							<TableCell>
-								<UpdateContactList
-									transaction={transaction}
-									type="agent"
-								/>
-							</TableCell>
-							<TableCell>
-								<UpdateContactList
-									transaction={transaction}
-									type="payer"
-								/>
-							</TableCell>
+							{showAgent && (
+								<TableCell>
+									<UpdateContactList
+										transaction={transaction}
+										type="agent"
+									/>
+								</TableCell>
+							)}
+							{showPayer && (
+								<TableCell>
+									<UpdateContactList
+										transaction={transaction}
+										type="payer"
+									/>
+								</TableCell>
+							)}
 							<TableCell>
 								<SheetStatus status={transaction.status} />
 							</TableCell>

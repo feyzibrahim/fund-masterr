@@ -6,10 +6,14 @@ import { getLedger, getTransactions } from "./action";
 
 interface Props {
 	params: { id: string };
+	searchParams?: { date: string | undefined };
 }
 
-export default async function LedgerDetailPage({ params }: Props) {
-	let { transactions, error: transactionsError } = await getTransactions(params.id);
+export default async function LedgerDetailPage({ params, searchParams }: Props) {
+	let { transactions, error: transactionsError } = await getTransactions(
+		params.id,
+		searchParams?.date
+	);
 	let { ledger } = await getLedger(params.id);
 
 	return (

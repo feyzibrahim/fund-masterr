@@ -196,11 +196,9 @@ export const getAllTransactions = async (req: Request, res: Response) => {
 		if (user.role === "payer") {
 			if (ledgerId) {
 				query.ledgerIds = ledgerId;
-			} else {
-				const { start, end } = getStartAndEndDate(req, res);
-				query.createdAt = { $gte: start, $lte: end };
-				query.createdBy = userId;
 			}
+			const { start, end } = getStartAndEndDate(req, res);
+			query.createdAt = { $gte: start, $lte: end };
 
 			const sheets = await Transaction.find(query)
 				.sort({
@@ -234,8 +232,7 @@ export const getAllTransactions = async (req: Request, res: Response) => {
 				.sort({
 					createdAt: -1,
 				})
-				.populate("createdBy", "firstName lastName phoneNumber")
-				.populate("agent", "firstName lastName phone");
+				.populate("createdBy", "firstName lastName phoneNumber");
 
 			return res.status(200).json(sheets);
 		}

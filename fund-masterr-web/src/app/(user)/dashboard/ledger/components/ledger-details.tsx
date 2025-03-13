@@ -10,27 +10,27 @@ type LedgerDetailsProps = {
 };
 
 export function LedgerDetails({ transactions, ledger }: LedgerDetailsProps) {
-	const calcGrandTotal = () => {
-		let grandTotal = 0;
+	if (!ledger) return null;
+
+	const calcBalance = () => {
+		let balance = 0;
 
 		if (transactions) {
 			transactions.forEach((transaction) => {
 				if (transaction.status !== "cancelled" && transaction.type === "sheet") {
-					grandTotal += transaction.amount;
+					balance -= transaction.amount;
 				}
 				if (transaction.status === "cancelled") {
-					grandTotal -= transaction.amount;
+					balance += transaction.amount;
 				}
 				if (transaction.type === "fund") {
-					grandTotal -= transaction.amount;
+					balance += transaction.amount;
 				}
 			});
 		}
 
-		return grandTotal;
+		return balance;
 	};
-
-	if (!ledger) return null;
 
 	return (
 		<Card>
@@ -52,8 +52,38 @@ export function LedgerDetails({ transactions, ledger }: LedgerDetailsProps) {
 						)}
 					</div>
 					<div className="text-right">
-						<p className="text-lg font-semibold">
-							Fund:{" "}
+						<p className="text-foreground-secondary">
+							Current Balance:{" "}
+							<span className="text-foreground font-bold">
+								{transactions && formatCurrency(ledger.balance)}
+							</span>
+						</p>
+					</div>
+				</div>
+				<div className="grid grid-cols-3 gap-4 mt-6">
+					<div>
+						<p className="text-foreground-secondary">Sheets Count</p>
+						<h1 className="text-xl font-semibold">
+							{transactions &&
+								transactions.filter(
+									(transaction) => transaction.type === "sheet"
+								).length}
+						</h1>
+					</div>
+					<div>
+						<p className="text-foreground-secondary">Cancelled Sheets</p>
+						<h1 className="text-xl font-semibold">
+							{transactions &&
+								transactions.filter(
+									(sheet) =>
+										sheet.status === "cancelled" &&
+										sheet.type === "sheet"
+								).length}
+						</h1>
+					</div>
+					<div>
+						<p className="text-foreground-secondary">Total Fund</p>
+						<h1 className="text-xl font-semibold">
 							{transactions &&
 								formatCurrency(
 									transactions.length > 0
@@ -68,49 +98,7 @@ export function LedgerDetails({ transactions, ledger }: LedgerDetailsProps) {
 												)
 										: 0
 								)}
-						</p>
-						{ledger && ledger.balance !== undefined ? (
-							<p className="text-foreground-secondary">
-								Balance: {formatCurrency(ledger.balance)}
-							</p>
-						) : (
-							<Button>Set Balance</Button>
-						)}
-					</div>
-				</div>
-				<div className="grid grid-cols-3 gap-4 mt-6">
-					<div>
-						<p className="text-foreground-secondary">Sheets Count</p>
-						<p className="text-xl font-semibold">
-							{transactions &&
-								transactions.filter(
-									(transaction) => transaction.type === "sheet"
-								).length}
-						</p>
-					</div>
-					<div>
-						<p className="text-foreground-secondary">Cancelled Sheets</p>
-						<p className="text-xl font-semibold">
-							{transactions &&
-								transactions.filter(
-									(sheet) =>
-										sheet.status === "cancelled" ||
-										sheet.type === "sheet"
-								).length}
-						</p>
-					</div>
-					<div>
-						<p className="text-foreground-secondary">
-							Total Amount Cancelled
-						</p>
-						<p className="text-xl font-semibold">
-							{transactions &&
-								formatCurrency(
-									transactions
-										.filter((sheet) => sheet.status === "cancelled")
-										.reduce((acc, sheet) => acc + sheet.amount, 0)
-								)}
-						</p>
+						</h1>
 					</div>
 				</div>
 				<div className="grid grid-cols-3 gap-4 mt-6">
@@ -127,10 +115,25 @@ export function LedgerDetails({ transactions, ledger }: LedgerDetailsProps) {
 								)}
 						</p>
 					</div>
-					<div className="border w-fit px-2 py-1 rounded">
-						<p className="text-foreground-secondary">Grand Total</p>
-						<p className="text-2xl font-bold">
-							{formatCurrency(calcGrandTotal())}
+					<div>
+						<p className="text-foreground-secondary">Cancelled Total</p>
+						<p className="text-xl font-bold">
+							{transactions &&
+								formatCurrency(
+									transactions
+										.filter(
+											(transaction) =>
+												transaction.type === "sheet" &&
+												transaction.status === "cancelled"
+										)
+										.reduce((acc, sheet) => acc + sheet.amount, 0)
+								)}
+						</p>
+					</div>
+					<div>
+						<p className="text-foreground-secondary">Day Balance</p>
+						<p className="text-xl font-bold">
+							{transactions && formatCurrency(calcBalance())}
 						</p>
 					</div>
 				</div>

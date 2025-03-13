@@ -1,3 +1,4 @@
+import { UpdateContactList } from "@/app/(user)/dashboard/sheets/components/update-agent-list";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ILedger } from "@/types/ledger-types";
@@ -66,16 +67,10 @@ export function TransactionsList({
 							transaction.type === "sheet" && (
 								<div className="mt-2">
 									<strong>Payer:</strong>{" "}
-									{transaction.payer ? (
-										`${transaction.payer.firstName} ${transaction.payer.lastName}`
-									) : (
-										<Button
-											variant="outline"
-											className="flex items-center gap-2"
-										>
-											<UserPlus className="w-4 h-4" /> Add Payer
-										</Button>
-									)}
+									<UpdateContactList
+										transaction={transaction}
+										type="payer"
+									/>
 								</div>
 							)}
 
@@ -84,17 +79,11 @@ export function TransactionsList({
 							ledger.contact.type === "payer" &&
 							transaction.type === "sheet" && (
 								<div className="mt-2">
-									<strong>Assigned To:</strong>{" "}
-									{transaction.agent ? (
-										`${transaction.agent.firstName} ${transaction.agent.lastName}`
-									) : (
-										<Button
-											variant="outline"
-											className="flex items-center gap-2"
-										>
-											<UserPlus className="w-4 h-4" /> Add Agent
-										</Button>
-									)}
+									<strong>Agent:</strong>{" "}
+									<UpdateContactList
+										transaction={transaction}
+										type="agent"
+									/>
 								</div>
 							)}
 					</div>

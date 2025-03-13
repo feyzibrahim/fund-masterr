@@ -3,11 +3,16 @@ import { ILedger } from "@/types/ledger-types";
 import { ITransaction } from "@/types/transaction-types";
 
 export async function getTransactions(
-	id: string
+	id: string,
+	date?: string
 ): Promise<{ transactions?: ITransaction[]; error?: string }> {
 	try {
+		const queryParams = new URLSearchParams();
+		if (date) queryParams.append("date", date);
+		queryParams.append("ledger", id);
+
 		const transactions = await AxiosRequest.get<ITransaction[]>(
-			`/transaction?ledger=${id}`
+			`/transaction${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
 		);
 		return { transactions };
 	} catch (error: any) {
